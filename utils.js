@@ -67,8 +67,13 @@ const StorageUtil = {
         if (saved) {
             try {
                 const parsed = JSON.parse(saved);
-                // Deep merge to preserve nested properties
-                appState = this.deepMerge(appState, parsed);
+                // Deep merge to preserve nested properties in place
+                this.deepMergeInPlace(appState, parsed);
+                
+                // Update the global reference to ensure it reflects the loaded state
+                if (window.utils) {
+                    window.utils.appState = appState;
+                }
             } catch (e) {
                 console.error('Error loading state from localStorage:', e);
             }
@@ -76,22 +81,19 @@ const StorageUtil = {
         return appState;
     },
 
-    // Deep merge utility to properly merge nested objects
-    deepMerge: function(target, source) {
-        const output = Object.assign({}, target);
+    // Deep merge utility to merge source into target (modifying target in place)
+    deepMergeInPlace: function(target, source) {
         if (this.isObject(target) && this.isObject(source)) {
             Object.keys(source).forEach(key => {
                 if (this.isObject(source[key])) {
-                    if (!(key in target))
-                        Object.assign(output, { [key]: source[key] });
-                    else
-                        output[key] = this.deepMerge(target[key], source[key]);
+                    if (!target[key]) Object.assign(target, { [key]: {} });
+                    this.deepMergeInPlace(target[key], source[key]);
                 } else {
-                    Object.assign(output, { [key]: source[key] });
+                    target[key] = source[key];
                 }
             });
         }
-        return output;
+        return target;
     },
 
     // Check if value is an object
@@ -211,7 +213,7 @@ const RandomUtil = {
     }
 };
 
-// Make utilities available globally for browser
+// Make utilities available globally for browser (with initial state)
 window.utils = {
     StorageUtil,
     TimeUtil,
@@ -219,6 +221,12 @@ window.utils = {
     RandomUtil,
     appState
 };
+
+// Ensure state is loaded when module is ready
+StorageUtil.loadState();
+
+// Update the global appState reference after loading (to ensure it reflects saved data)
+window.utils.appState = appState;
 
 // Export for use in other modules (if using module system)
 if (typeof module !== 'undefined' && module.exports) {

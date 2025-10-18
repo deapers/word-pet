@@ -3,119 +3,85 @@
 // Function to create the initial expanded sentence library
 function createInitialSentences() {
     return [
-        // Food (15 sentences)
+        // Food & Drinks (15 sentences)
         { text: "I like apples", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-        { text: "She eats bananas", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-        { text: "He drinks milk", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-        { text: "We eat bread", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-        { text: "They like oranges", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
+        { text: "I drink water", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
+        { text: "We eat lunch", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
+        { text: "Mom cooks dinner", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
         { text: "I want cookies", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-        { text: "She buys eggs", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-        { text: "He cooks rice", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
+        { text: "Dad buys bread", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
+        { text: "We have breakfast", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
+        { text: "He likes pizza", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
+        { text: "She drinks milk", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
+        { text: "I eat bananas", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
+        { text: "We cook rice", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
+        { text: "They buy fruit", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
+        { text: "I love ice cream", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
+        { text: "She makes soup", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
         { text: "We drink juice", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-        { text: "They eat chicken", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-        { text: "I love pizza", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-        { text: "She makes salad", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-        { text: "He likes cheese", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-        { text: "We buy fruit", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-        { text: "They drink tea", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
 
-        // Animals (15 sentences)
-        { text: "The cat is cute", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "animals" },
-        { text: "A dog runs fast", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "animals" },
-        { text: "Birds fly high", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "animals" },
-        { text: "Fish swim in water", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "animals" },
-        { text: "Elephants are big", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "animals" },
-        { text: "Monkeys climb trees", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "animals" },
-        { text: "Lions roar loudly", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "animals" },
-        { text: "Bears sleep winter", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "animals" },
-        { text: "Rabbits hop quickly", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "animals" },
-        { text: "Snakes slither ground", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "animals" },
-        { text: "Frogs jump ponds", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "animals" },
-        { text: "Horses run fast", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "animals" },
-        { text: "Cows eat grass", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "animals" },
-        { text: "Pigs roll mud", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "animals" },
-        { text: "Sheep have wool", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "animals" },
-
-        // Weather (15 sentences)
-        { text: "It is sunny", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
-        { text: "Rain falls softly", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
-        { text: "Snow is cold", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
-        { text: "Wind blows leaves", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
-        { text: "Clouds float sky", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
-        { text: "Thunder rumbles loudly", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
-        { text: "Lightning flashes bright", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
-        { text: "Hail bounces ground", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
-        { text: "Fog hides mountains", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
-        { text: "Dew sparkles morning", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
-        { text: "Frost covers windows", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
-        { text: "Heat makes tired", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
-        { text: "Cool air feels nice", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
-        { text: "Storm brings wind", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
-        { text: "Sun shines brightly", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
-
-        // Family (15 sentences)
+        // Family & Home (15 sentences)
         { text: "Mom loves me", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
         { text: "Dad plays games", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
-        { text: "Brother shares toys", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
-        { text: "Sister draws pictures", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
+        { text: "I hug my sister", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
         { text: "Grandma tells stories", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
-        { text: "Grandpa reads books", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
-        { text: "Uncle visits weekends", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
-        { text: "Aunt bakes cookies", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
-        { text: "Cousins play together", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
+        { text: "I clean my room", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
+        { text: "We watch TV", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
+        { text: "I brush my teeth", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
         { text: "Family eats dinner", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
-        { text: "Parents help homework", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
-        { text: "Kids do chores", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
-        { text: "Baby sleeps crib", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
-        { text: "Teenager studies hard", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
-        { text: "Family goes vacation", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
+        { text: "I make my bed", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
+        { text: "Dad drives the car", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
+        { text: "Mom cooks food", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
+        { text: "I call my friend", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
+        { text: "We go to bed", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
+        { text: "I wash my hands", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
+        { text: "Brother reads books", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
 
-        // School (15 sentences)
+        // School & Learning (15 sentences)
         { text: "I go to school", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "Teacher explains lessons", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "Students raise hands", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "Books sit desks", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "Pencils write paper", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "Bell rings lunch", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "Children play recess", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "Homework due Friday", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "Math problems challenging", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "Reading improves vocabulary", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "Science experiments fun", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "Art class creative", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "Music makes happy", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "Friends help study", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "School bus yellow", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
+        { text: "Teacher reads books", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
+        { text: "I write with pencil", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
+        { text: "Students sit desks", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
+        { text: "I learn new words", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
+        { text: "Kids play at recess", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
+        { text: "I read books", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
+        { text: "Teacher explains math", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
+        { text: "I do homework", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
+        { text: "School starts at nine", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
+        { text: "I raise my hand", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
+        { text: "We sing songs", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
+        { text: "Art class is fun", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
+        { text: "I study for tests", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
+        { text: "Friends share toys", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
 
-        // Toys & Play (15 sentences)
+        // Activities & Play (15 sentences)
         { text: "I play with toys", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "Blocks stack tall", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "Dolls wear dresses", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "Cars race fast", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "Puzzles challenge minds", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "Balls bounce walls", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "Teddy bears soft", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "Games teach skills", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "Toys bring joy", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "Children laugh playfully", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "Kites fly windy", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "Sandcastles wash waves", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "Swings go high", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "Slides are slippery", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "Hide seek fun", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
+        { text: "Kids ride bikes", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
+        { text: "I jump rope", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
+        { text: "We play soccer", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
+        { text: "I build with blocks", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
+        { text: "Kids swim at pool", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
+        { text: "I draw pictures", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
+        { text: "We play hide and seek", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
+        { text: "I ride my skateboard", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
+        { text: "Kids play on swings", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
+        { text: "I dance to music", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
+        { text: "We fly kites", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
+        { text: "I play video games", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
+        { text: "Kids run in park", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
+        { text: "I play with dolls", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
 
-        // Transportation (10 sentences)
-        { text: "Cars drive roads", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "transportation" },
-        { text: "Trains travel tracks", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "transportation" },
-        { text: "Planes fly sky", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "transportation" },
-        { text: "Boats sail water", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "transportation" },
-        { text: "Bikes ride paths", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "transportation" },
-        { text: "Buses carry people", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "transportation" },
-        { text: "Trucks haul goods", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "transportation" },
-        { text: "Helicopters hover air", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "transportation" },
-        { text: "Subway moves underground", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "transportation" },
-        { text: "Motorcycles zoom streets", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "transportation" }
+        // Weather & Outdoors (10 sentences)
+        { text: "It is sunny", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
+        { text: "It rains today", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
+        { text: "Snow falls down", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
+        { text: "The wind blows", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
+        { text: "It is cold outside", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
+        { text: "I wear a jacket", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
+        { text: "The sun shines bright", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
+        { text: "It is warm today", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
+        { text: "I see a rainbow", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
+        { text: "The clouds are gray", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" }
     ];
 }
 
@@ -276,9 +242,29 @@ const DataUtil = {
     
     getMistakeBagSentences: function() {
         console.log("getMistakeBagSentences called - Current mistake bag:", mistakeBag.sentences);
-        const result = mistakeBag.sentences.map(text => this.getSentenceByText(text)).filter(Boolean);
-        console.log("getMistakeBagSentences result:", result);
-        return result;
+        
+        // Filter out any sentences that no longer exist in the main sentences array
+        const validMistakeSentences = [];
+        const sentencesToRemove = [];
+        
+        mistakeBag.sentences.forEach(text => {
+            const sentence = this.getSentenceByText(text);
+            if (sentence) {
+                validMistakeSentences.push(sentence);
+            } else {
+                // Mark for removal from mistake bag
+                sentencesToRemove.push(text);
+            }
+        });
+        
+        // Clean up mistake bag by removing references to non-existent sentences
+        if (sentencesToRemove.length > 0) {
+            mistakeBag.sentences = mistakeBag.sentences.filter(text => !sentencesToRemove.includes(text));
+            this.saveData(); // Persist the cleaned-up mistake bag
+        }
+        
+        console.log("getMistakeBagSentences result:", validMistakeSentences);
+        return validMistakeSentences;
     },
     
     isMistakeBagSentence: function(text) {
@@ -372,12 +358,32 @@ const DataUtil = {
         if (mistakeBag.sentences.length > 0 && Math.random() < mistakeBag.reviewPriority) {
             // Pick a random sentence from the mistake bag
             const randomIndex = Math.floor(Math.random() * mistakeBag.sentences.length);
-            return this.getSentenceByText(mistakeBag.sentences[randomIndex]);
+            const sentenceText = mistakeBag.sentences[randomIndex];
+            const sentence = this.getSentenceByText(sentenceText);
+            
+            // If sentence doesn't exist in main array, create it temporarily but prioritize it
+            if (!sentence) {
+                // Clean up the mistake bag by removing reference to non-existent sentence
+                mistakeBag.sentences = mistakeBag.sentences.filter(item => item !== sentenceText);
+                this.saveData();
+                
+                // Fallback to a random sentence from the general list
+                if (sentences.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * sentences.length);
+                    return sentences[randomIndex];
+                }
+                return null;
+            }
+            
+            return sentence;
         }
         
         // 70% chance to get a random sentence from the general list
-        const randomIndex = Math.floor(Math.random() * sentences.length);
-        return sentences[randomIndex];
+        if (sentences.length > 0) {
+            const randomIndex = Math.floor(Math.random() * sentences.length);
+            return sentences[randomIndex];
+        }
+        return null;
     }
 };
 

@@ -879,6 +879,11 @@ const GameManager = {
 
 // Initialize the game when the page loads
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize data first to ensure saved data is loaded
+    if (typeof data !== 'undefined' && data.DataUtil) {
+        data.DataUtil.initializeData();
+    }
+    
     // Wait for all dependencies to load
     const checkDependencies = setInterval(function() {
         if (typeof utils !== 'undefined' && typeof data !== 'undefined') {

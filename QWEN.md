@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**小词怪 WordPet** (WordPet) is an educational game designed for children aged 6-12 to learn sentence construction through gamification. The project is designed as a single-page HTML5 application (PWA) that focuses on:
+**小词怪 WordPet** (WordPet) is an educational game designed for children aged 6-12 to learn sentence construction through gamification. The project is a single-page HTML5 application (PWA) that focuses on:
 
 - **Core Gameplay**: Sentence拼接 (sentence jigsaw) games where children drag and arrange words to form correct sentences
 - **Gamification**: Virtual pet growth system tied to learning progress
@@ -14,84 +14,133 @@
 The project follows a lightweight architecture using:
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+)
 - **Data Storage**: LocalStorage for persistence
-- **Game Mechanics**: Canvas or DOM-based drag-and-drop for sentence assembly
-- **Animations**: CSS animations or Lottie JSON for pet growth and reward animations
+- **Game Mechanics**: Click-based drag-and-drop for sentence assembly
+- **Animations**: CSS animations for pet growth and reward animations
+- **Accessibility**: Text-to-speech (TTS) for learning support
 
-## Project Structure (Planned)
+## Project Structure
 
-Based on the specification, the project will include these key files:
 ```
 index.html - Single page framework
 style.css - Styling and animations
 game.js - Core game logic
 data.js - Sentence library and mistake data
 pet.js - Pet growth logic
-utils.js - Reward calculations, stamina management, TTS
+utils.js - Reward calculations, stamina management, TTS, and utilities
+wordpet.spec.md - Complete design specification
 ```
 
 ## Core Features
 
 ### 1. Sentence拼接 Game
-- Randomized word sequences from daily life themes
-- Drag-and-drop or click-to-order interface
+- Randomized word sequences from daily life themes (food, animals, weather, family, school, etc.)
+- Click-to-order interface for sentence construction
 - Reward system for correct answers with combo bonuses
 - Mistake bag for incorrect answers
 
 ### 2. Pet Growth System
 - Experience points earned through correct answers
-- Level progression with visual rewards
-- Stamina system to prevent overuse
+- Level progression with visual rewards (emoji changes)
+- Stamina system to prevent overuse (recharges over time)
 - Offline experience/energy regeneration
 
 ### 3. Learning Reinforcement
-- Mistake bag with prioritized review
+- Mistake bag with prioritized review (30% chance of appearing)
 - Mastery tracking for each sentence
-- Bonus rewards for correcting mistakes
+- Bonus rewards for correcting mistakes (60% more coins, 50% more experience)
 
-### 4. Parental Controls
-- Settings for audio/TTS
-- Daily stamina limits
-- Learning progress tracking
+### 4. User Experience Elements
+- Combo tracking for consecutive correct answers
+- Encouraging feedback messages for both correct and incorrect answers
+- Text-to-speech for both words and feedback messages
+- Visual animations for level-ups and rewards
 
 ## Data Model
 
-The application will use a simple JSON structure stored in LocalStorage:
+The application uses a JSON structure stored in LocalStorage:
 ```json
 {
   "player": {
     "level": 1,
     "coins": 0,
-    "stamina": 5
+    "stamina": 5,
+    "currentCombo": 0,
+    "maxCombo": 0,
+    "totalSentencesCompleted": 0,
+    "totalMistakesMade": 0
   },
   "pet": {
     "level": 1,
     "exp": 0,
-    "decorations": []
+    "expToNextLevel": 100,
+    "decorations": [],
+    "lastGrowthUpdate": "timestamp",
+    "offlineExpGain": 10
   },
   "sentences": [
-    {"id": 1, "text": "I like apples", "mastery": 0.5},
-    {"id": 2, "text": "It is sunny today", "mastery": 0.3}
+    {
+      "text": "I like apples",
+      "mastery": 0.5,
+      "lastReviewed": "timestamp",
+      "incorrectCount": 1,
+      "correctCount": 2,
+      "difficulty": "easy",
+      "category": "food"
+    }
   ],
-  "mistakeBag": [
-    {"id": 2, "text": "It is sunny today", "wrongCount": 1, "mastery": 0.3}
-  ]
+  "mistakeBag": {
+    "sentences": ["sentence text"],
+    "reviewPriority": 0.3
+  },
+  "failedSentences": {
+    "sentences": ["sentence text"],
+    "failureCounts": {"sentence text": 2},
+    "lastFailedDate": {"sentence text": "timestamp"}
+  }
 }
 ```
 
+## Implementation Details
+
+### Game Flow
+1. Player starts on the home screen with pet display and stats
+2. Player selects "Start Practice" to begin sentence puzzle
+3. Game checks if player has stamina and retrieves next sentence (with 30% priority for mistake bag items)
+4. Sentence words are scrambled and presented for arrangement
+5. Player arranges words by clicking them into the sentence target
+6. Upon submitting, correctness is checked and appropriate rewards/feedback given
+7. Game updates player/pet stats and returns to home screen or continues based on mode
+
+### Sentence Mastery System
+- Correct answer: +0.15 mastery, minimum 0.0, maximum 1.0
+- Incorrect answer: -0.05 mastery, minimum 0.0, maximum 1.0
+- Sentences with <0.8 mastery go to mistake bag
+- Sentences with ≥0.8 mastery are removed from mistake bag
+- Mastery determines when a sentence is considered "learned"
+
+### Stamina System
+- Default 5 stamina points with a maximum daily limit
+- Stamina decreases over time, recharging automatically
+- Each completed sentence (correct or incorrect) costs 1 stamina
+- Prevents overuse and encourages spaced learning
+
+### Pet Growth System
+- Pet gains experience from correct answers and pet care activities
+- Experience thresholds increase as the pet levels up (100 + level * 50)
+- Pet emoji changes as levels increase (🐶 → 🐩 → 🐕‍🦺)
+- Offline experience gained based on time elapsed since last play
+
 ## Development Approach
 
-The project follows an MVP (Minimum Viable Product) approach with the following development sequence:
-1. Single-page framework (HTML + CSS)
-2. Core sentence拼接 game logic
-3. LocalStorage data persistence
+The project follows an MVP (Minimum Viable Product) approach with fully implemented:
+1. Single-page framework with responsive design
+2. Core sentence拼接 game logic with click-based interactions
+3. LocalStorage data persistence for all game state
 4. Reward and mistake bag mechanisms
 5. Pet growth animations and stamina system
 6. Mistake review functionality
-7. Settings and parental controls
-
-## Current Status
-
-The project is currently in the specification phase with `wordpet.spec.md` containing the complete design specification. No implementation files have been created yet.
+7. Text-to-speech integration for accessibility
+8. Combo system and encouraging feedback messages
 
 ## Design Philosophy
 
@@ -100,12 +149,4 @@ The project is currently in the specification phase with `wordpet.spec.md` conta
 - **Self-motivated learning**: Mistake review offers bonus rewards
 - **Gamification**: Pet animations, coins/food, and combo rewards
 - **Anti-addiction**: Daily stamina limits and offline growth mechanisms
-
-## Future Implementation Notes
-
-The implementation should focus on:
-- Simple drag-and-drop mechanics that work well for children
-- Engaging but not overwhelming animations
-- Clear visual feedback for correct/incorrect answers
-- Intuitive navigation between game, pet care, and review sections
-- Performance optimization for mobile devices where children typically use the app
+- **Accessibility**: Text-to-speech, large touch targets, and keyboard navigation support
