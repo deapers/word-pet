@@ -411,16 +411,42 @@ const GameManager = {
         const isCorrect = this.checkSentenceAnswer(wordsArray);
         
         if (isCorrect) {
-            // Move to next sentence after successful answer
+            // For correct answer, give positive feedback but don't return to home automatically
+            // The only ways to return to home are: 
+            // 1. Clicking the "Back to Home" button
+            // 2. Skipping 5 times
+            // 3. Reaching sentence limit in continuous mode
+            
             if (gameState.isInContinuousMode) {
                 // In continuous mode, move to next sentence
                 setTimeout(() => {
                     this.moveToNextSentence();
                 }, 1500);
             } else {
-                // In normal mode, return to home screen
+                // In normal mode, provide option to continue with a new sentence
+                // without automatically returning home
+                this.showFeedback("Correct! Great job! You can continue with another sentence.", "success");
+                
+                // Optionally get a new sentence in normal mode without returning home
                 setTimeout(() => {
-                    this.showNextSentence();
+                    // Get next sentence (with 30% priority for mistake bag items)
+                    const sentence = data.DataUtil.getNextSentence();
+                    if (!sentence) {
+                        this.showFeedback("No more sentences available!", "error");
+                        this.returnToHome();
+                        return;
+                    }
+                    
+                    gameState.currentSentence = sentence;
+                    
+                    // Scramble the sentence words
+                    this.scrambleSentence(sentence.text);
+                    
+                    // Display the game interface with the new sentence
+                    this.displaySentencePuzzle();
+                    
+                    // Keep game state active
+                    gameState.isGameActive = true;
                 }, 1500);
             }
         } else {
