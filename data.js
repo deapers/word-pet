@@ -222,6 +222,14 @@ const DataUtil = {
 // Initialize data when module loads
 DataUtil.initializeData();
 
+// Make data available globally for browser
+window.data = {
+    DataUtil,
+    sentences,
+    mistakeBag,
+    petData
+};
+
 // Export for use in other modules (if using module system)
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {

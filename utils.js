@@ -151,6 +151,15 @@ const RandomUtil = {
     }
 };
 
+// Make utilities available globally for browser
+window.utils = {
+    StorageUtil,
+    TimeUtil,
+    ValidationUtil,
+    RandomUtil,
+    appState
+};
+
 // Export for use in other modules (if using module system)
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {

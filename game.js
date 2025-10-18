@@ -15,9 +15,15 @@ const GameManager = {
     // Start a new sentence puzzle
     startSentencePuzzle: function() {
         // Check if player has stamina
-        utils.TimeUtil.updateStamina(); // Update stamina based on elapsed time
-        if (utils.appState.player.stamina <= 0) {
-            this.showFeedback("You're out of stamina! Wait for it to recharge or check back later.", "error");
+        if (typeof utils !== 'undefined' && utils.TimeUtil) {
+            utils.TimeUtil.updateStamina(); // Update stamina based on elapsed time
+            if (utils.appState.player.stamina <= 0) {
+                this.showFeedback("You're out of stamina! Wait for it to recharge or check back later.", "error");
+                return false;
+            }
+        } else {
+            console.error("Utils module not loaded properly");
+            this.showFeedback("System not ready yet. Please refresh the page.", "error");
             return false;
         }
         
@@ -31,8 +37,12 @@ const GameManager = {
         gameState.currentSentence = sentence;
         
         // Update stamina (decrease by 1)
-        utils.appState.player.stamina = Math.max(0, utils.appState.player.stamina - 1);
-        utils.StorageUtil.saveState();
+        if (typeof utils !== 'undefined' && utils.StorageUtil) {
+            utils.appState.player.stamina = Math.max(0, utils.appState.player.stamina - 1);
+            utils.StorageUtil.saveState();
+        } else {
+            console.error("Utils module not loaded properly");
+        }
         
         // Update UI to show updated stamina
         this.updatePlayerStats();
@@ -71,7 +81,8 @@ const GameManager = {
         const isCorrect = userSentence === gameState.currentSentence.text;
         
         // Update sentence mastery based on result
-        const currentMastery = data.DataUtil.getSentenceMastery(gameState.currentSentence.text);
+        const currentMastery = (typeof data !== 'undefined' && data.DataUtil) ? 
+            data.DataUtil.getSentenceMastery(gameState.currentSentence.text) : 0.0;
         let newMastery = currentMastery;
         
         if (isCorrect) {
@@ -110,14 +121,18 @@ const GameManager = {
             // Add experience to player and pet
             const expGain = baseExp + comboBonus;
             utils.appState.player.level = this.calculatePlayerLevel(expGain);
-            data.PetManager.addExperience(expGain);
+            if (typeof data !== 'undefined' && data.PetManager) {
+                data.PetManager.addExperience(expGain);
+            }
             
             // Update sentence mastery - correct
-            data.DataUtil.updateSentenceMastery(
-                gameState.currentSentence.text, 
-                newMastery, 
-                true // isCorrect
-            );
+            if (typeof data !== 'undefined' && data.DataUtil) {
+                data.DataUtil.updateSentenceMastery(
+                    gameState.currentSentence.text, 
+                    newMastery, 
+                    true // isCorrect
+                );
+            }
             
             // If mastery is now high enough, remove from mistake bag
             if (newMastery >= 0.8 && isMistakeReview) {
@@ -134,15 +149,19 @@ const GameManager = {
             
             // Add to mistake bag if mastery is low
             if (newMastery < 0.8) {
-                data.DataUtil.addSentenceToMistakeBag(gameState.currentSentence.text);
+                if (typeof data !== 'undefined' && data.DataUtil) {
+                    data.DataUtil.addSentenceToMistakeBag(gameState.currentSentence.text);
+                }
             }
             
             // Update sentence mastery - incorrect
-            data.DataUtil.updateSentenceMastery(
-                gameState.currentSentence.text, 
-                newMastery, 
-                false // isCorrect
-            );
+            if (typeof data !== 'undefined' && data.DataUtil) {
+                data.DataUtil.updateSentenceMastery(
+                    gameState.currentSentence.text, 
+                    newMastery, 
+                    false // isCorrect
+                );
+            }
             
             this.showFeedback(`Almost! The correct sentence was: "${gameState.currentSentence.text}". You still earned 1 coin.`, "error");
             
@@ -151,14 +170,20 @@ const GameManager = {
         }
         
         // Save updated state
-        utils.StorageUtil.saveState();
-        data.DataUtil.saveData();
+        if (typeof utils !== 'undefined' && utils.StorageUtil) {
+            utils.StorageUtil.saveState();
+        }
+        if (typeof data !== 'undefined' && data.DataUtil) {
+            data.DataUtil.saveData();
+        }
         
         // Update the player stats display
         this.updatePlayerStats();
         
         // Update pet display
-        data.PetManager.updatePetDisplay();
+        if (typeof data !== 'undefined' && data.PetManager) {
+            data.PetManager.updatePetDisplay();
+        }
         
         return isCorrect;
     },
@@ -354,6 +379,11 @@ const GameManager = {
     
     // Update player stats display
     updatePlayerStats: function() {
+        if (typeof utils === 'undefined') {
+            console.error("Utils module not loaded");
+            return;
+        }
+        
         const statsContainer = document.getElementById('player-stats');
         if (statsContainer) {
             statsContainer.innerHTML = `
@@ -399,6 +429,10 @@ const GameManager = {
     
     // Start mistake review
     startMistakeReview: function() {
+        if (typeof data === 'undefined' || !data.DataUtil) {
+            this.showFeedback("System not ready yet. Please refresh the page.", "error");
+            return;
+        }
         const mistakeSentences = data.DataUtil.getMistakeBagSentences();
         
         if (mistakeSentences.length === 0) {
@@ -500,6 +534,17 @@ const GameManager = {
     
     // Initialize the game
     init: function() {
+        // Check dependencies
+        if (typeof utils === 'undefined' || !utils.StorageUtil) {
+            console.error("Utils module not loaded properly");
+            return;
+        }
+        
+        if (typeof data === 'undefined' || !data.PetManager || !data.DataUtil) {
+            console.error("Data module not loaded properly");
+            return;
+        }
+        
         // Load saved state
         utils.StorageUtil.loadState();
         
@@ -507,8 +552,11 @@ const GameManager = {
         data.PetManager.init();
         
         // Set up initial screen
-        document.getElementById('home-screen').classList.add('active');
-        document.getElementById('game-screen').classList.remove('active');
+        const homeScreen = document.getElementById('home-screen');
+        const gameScreen = document.getElementById('game-screen');
+        
+        if (homeScreen) homeScreen.classList.add('active');
+        if (gameScreen) gameScreen.classList.remove('active');
         
         // Update player stats
         this.updatePlayerStats();
@@ -526,7 +574,15 @@ const GameManager = {
 
 // Initialize the game when the page loads
 document.addEventListener('DOMContentLoaded', function() {
-    GameManager.init();
+    // Wait for all dependencies to load
+    const checkDependencies = setInterval(function() {
+        if (typeof utils !== 'undefined' && typeof data !== 'undefined') {
+            clearInterval(checkDependencies);
+            GameManager.init();
+        } else {
+            console.log("Waiting for dependencies...");
+        }
+    }, 100);
 });
 
 // If running in browser environment, attach to window

@@ -4,11 +4,21 @@
 const PetManager = {
     // Get current pet data
     getPet: function() {
-        return data.petData; // Using data from data.js
+        if (typeof data !== 'undefined' && data.petData) {
+            return data.petData; // Using data from data.js
+        } else {
+            console.error("Data module not loaded");
+            return null;
+        }
     },
     
     // Update pet level and related stats
     updatePetLevel: function(newLevel) {
+        if (typeof data === 'undefined' || !data.petData || !data.DataUtil) {
+            console.error("Data module not loaded");
+            return null;
+        }
+        
         data.petData.level = newLevel;
         // Update exp needed for next level
         data.petData.expToNextLevel = 100 + (newLevel * 50);
@@ -24,6 +34,11 @@ const PetManager = {
     
     // Add experience to pet
     addExperience: function(expAmount) {
+        if (typeof data === 'undefined' || !data.petData || !data.DataUtil) {
+            console.error("Data module not loaded");
+            return null;
+        }
+        
         data.petData.exp += expAmount;
         
         // Check if pet leveled up
@@ -53,6 +68,15 @@ const PetManager = {
     
     // Handle offline pet growth calculations
     calculateOfflineGrowth: function() {
+        if (typeof data === 'undefined' || !data.petData || !data.DataUtil) {
+            console.error("Data module not loaded");
+            return {
+                hoursPassed: 0,
+                expGained: 0,
+                currentPet: null
+            };
+        }
+        
         // Calculate time since last update
         const lastUpdate = new Date(data.petData.lastGrowthUpdate);
         const now = new Date();
@@ -94,6 +118,11 @@ const PetManager = {
     
     // Unlock decoration for pet
     unlockDecoration: function(decorationId, name, unlockLevel) {
+        if (typeof data === 'undefined' || !data.petData || !data.DataUtil) {
+            console.error("Data module not loaded");
+            return null;
+        }
+        
         // Check if decoration already exists
         const existingDec = data.petData.decorations.find(d => d.id === decorationId);
         if (existingDec) {
@@ -186,6 +215,11 @@ const PetManager = {
     
     // Initialize pet system
     init: function() {
+        if (typeof data === 'undefined' || !data.DataUtil) {
+            console.error("Data module not loaded");
+            return;
+        }
+        
         // Calculate any offline growth since last session
         this.calculateOfflineGrowth();
         
@@ -194,9 +228,15 @@ const PetManager = {
     }
 };
 
-// If running in browser environment, attach to window
+// Make pet manager available globally for browser
 if (typeof window !== 'undefined') {
     window.PetManager = PetManager;
+    
+    // Attach to data object for consistency with other modules
+    if (!window.data) {
+        window.data = {};
+    }
+    window.data.PetManager = PetManager;
 }
 
 // Export for use in other modules (if using module system)
