@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WordPet - Learn Sentences with Fun</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1>WordPet</h1>
+        </header>
+        
+        <main id="main-content">
+            <!-- Game content will be dynamically inserted here -->
+            <div id="home-screen" class="screen active">
+                <h2>Welcome to WordPet!</h2>
+                <div id="pet-display">
+                    <!-- Pet will be displayed here -->
+                </div>
+                <div id="player-stats">
+                    <!-- Player stats will be displayed here -->
+                </div>
+                <div id="home-buttons">
+                    <button id="start-practice-btn" class="btn-primary">Start Practice</button>
+                    <button id="review-btn" class="btn-secondary">Review Mistakes</button>
+                    <button id="pet-care-btn" class="btn-secondary">Pet Care</button>
+                    <button id="settings-btn" class="btn-secondary">Settings</button>
+                </div>
+            </div>
+            
+            <div id="game-screen" class="screen">
+                <div id="sentence-puzzle-container">
+                    <!-- Sentence puzzle will be displayed here -->
+                </div>
+                <div id="feedback-container">
+                    <!-- Feedback messages will appear here -->
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="utils.js"></script>
+    <script src="data.js"></script>
+    <script src="pet.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
