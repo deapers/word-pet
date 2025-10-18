@@ -1234,8 +1234,22 @@ const DataUtil = {
             this.saveData(); // Persist the cleaned-up mistake bag
         }
         
-        console.log("getMistakeBagSentences result:", validMistakeSentences);
-        return validMistakeSentences;
+        // Sort the valid mistake sentences by difficulty (easy -> medium -> hard) first, then by mastery (ascending - lowest mastery first)
+        const sortedValidMistakeSentences = validMistakeSentences.sort((a, b) => {
+            // Define difficulty order: easy=0, medium=1, hard=2
+            const difficultyOrder = { "easy": 0, "medium": 1, "hard": 2 };
+            
+            // Compare difficulty first
+            if (difficultyOrder[a.difficulty] !== difficultyOrder[b.difficulty]) {
+                return difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty];
+            }
+            
+            // If difficulty is the same, compare mastery (lower mastery first)
+            return a.mastery - b.mastery;
+        });
+        
+        console.log("getMistakeBagSentences result:", sortedValidMistakeSentences);
+        return sortedValidMistakeSentences;
     },
     
     isMistakeBagSentence: function(text) {
@@ -1388,22 +1402,32 @@ const DataUtil = {
     getNextSentence: function() {
         // First, check if we should get a mistake bag sentence (30% chance)
         if (mistakeBag.sentences.length > 0 && Math.random() < mistakeBag.reviewPriority) {
-            // Pick a random sentence from the mistake bag
-            const randomIndex = Math.floor(Math.random() * mistakeBag.sentences.length);
-            const sentenceText = mistakeBag.sentences[randomIndex];
-            const sentence = this.getSentenceByText(sentenceText);
+            // Get all mistake bag sentences and sort them by difficulty and mastery
+            const mistakeSentences = mistakeBag.sentences.map(text => this.getSentenceByText(text)).filter(Boolean);
             
-            // If sentence doesn't exist in main array, create it temporarily but prioritize it
-            if (!sentence) {
-                // Clean up the mistake bag by removing reference to non-existent sentence
-                mistakeBag.sentences = mistakeBag.sentences.filter(item => item !== sentenceText);
-                this.saveData();
+            if (mistakeSentences.length > 0) {
+                // Sort mistake sentences by difficulty (easy -> medium -> hard) first, then by mastery (ascending - lowest mastery first)
+                const sortedMistakeSentences = mistakeSentences.sort((a, b) => {
+                    // Define difficulty order: easy=0, medium=1, hard=2
+                    const difficultyOrder = { "easy": 0, "medium": 1, "hard": 2 };
+                    
+                    // Compare difficulty first
+                    if (difficultyOrder[a.difficulty] !== difficultyOrder[b.difficulty]) {
+                        return difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty];
+                    }
+                    
+                    // If difficulty is the same, compare mastery (lower mastery first)
+                    return a.mastery - b.mastery;
+                });
                 
-                // Fallback to a low mastery sentence from the general list
+                // Return the first (easiest and lowest mastery) sentence from the sorted mistake bag
+                return sortedMistakeSentences[0];
+            } else {
+                // If no valid sentences in mistake bag, clean up and fallback to general list
+                mistakeBag.sentences = [];
+                this.saveData();
                 return this.getNextLowMasterySentence();
             }
-            
-            return sentence;
         }
         
         // 70% chance: get a sentence based on mastery (low mastery first)
@@ -1424,12 +1448,34 @@ const DataUtil = {
         
         // If all sentences are in mistake bag or no filtered results, use all sentences
         if (availableSentences.length === 0) {
-            // Sort all sentences by mastery (ascending - lowest mastery first)
-            const sortedSentences = [...sentences].sort((a, b) => a.mastery - b.mastery);
+            // Sort all sentences by difficulty (easy -> medium -> hard) first, then by mastery (ascending - lowest mastery first)
+            const sortedSentences = [...sentences].sort((a, b) => {
+                // Define difficulty order: easy=0, medium=1, hard=2
+                const difficultyOrder = { "easy": 0, "medium": 1, "hard": 2 };
+                
+                // Compare difficulty first
+                if (difficultyOrder[a.difficulty] !== difficultyOrder[b.difficulty]) {
+                    return difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty];
+                }
+                
+                // If difficulty is the same, compare mastery (lower mastery first)
+                return a.mastery - b.mastery;
+            });
             return sortedSentences[0];
         } else {
-            // Sort available sentences by mastery (ascending - lowest mastery first)
-            const sortedSentences = [...availableSentences].sort((a, b) => a.mastery - b.mastery);
+            // Sort available sentences by difficulty (easy -> medium -> hard) first, then by mastery (ascending - lowest mastery first)
+            const sortedSentences = [...availableSentences].sort((a, b) => {
+                // Define difficulty order: easy=0, medium=1, hard=2
+                const difficultyOrder = { "easy": 0, "medium": 1, "hard": 2 };
+                
+                // Compare difficulty first
+                if (difficultyOrder[a.difficulty] !== difficultyOrder[b.difficulty]) {
+                    return difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty];
+                }
+                
+                // If difficulty is the same, compare mastery (lower mastery first)
+                return a.mastery - b.mastery;
+            });
             return sortedSentences[0];
         }
     }
