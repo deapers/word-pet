@@ -1,92 +1,7 @@
 // WordPet - Sentence Data and Management
 
-// Function to create the initial expanded sentence library
-function createInitialSentences() {
-    return [
-        // Food & Drinks (15 sentences)
-        { text: "I like apples", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-        { text: "I drink water", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-        { text: "We eat lunch", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-        { text: "Mom cooks dinner", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-        { text: "I want cookies", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-        { text: "Dad buys bread", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-        { text: "We have breakfast", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-        { text: "He likes pizza", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-        { text: "She drinks milk", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-        { text: "I eat bananas", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-        { text: "We cook rice", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-        { text: "They buy fruit", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-        { text: "I love ice cream", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-        { text: "She makes soup", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-        { text: "We drink juice", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
-
-        // Family & Home (15 sentences)
-        { text: "Mom loves me", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
-        { text: "Dad plays games", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
-        { text: "I hug my sister", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
-        { text: "Grandma tells stories", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
-        { text: "I clean my room", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
-        { text: "We watch TV", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
-        { text: "I brush my teeth", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
-        { text: "Family eats dinner", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
-        { text: "I make my bed", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
-        { text: "Dad drives the car", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
-        { text: "Mom cooks food", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
-        { text: "I call my friend", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
-        { text: "We go to bed", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
-        { text: "I wash my hands", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
-        { text: "Brother reads books", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "family" },
-
-        // School & Learning (15 sentences)
-        { text: "I go to school", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "Teacher reads books", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "I write with pencil", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "Students sit desks", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "I learn new words", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "Kids play at recess", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "I read books", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "Teacher explains math", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "I do homework", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "School starts at nine", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "I raise my hand", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "We sing songs", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "Art class is fun", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "I study for tests", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-        { text: "Friends share toys", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "school" },
-
-        // Activities & Play (15 sentences)
-        { text: "I play with toys", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "Kids ride bikes", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "I jump rope", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "We play soccer", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "I build with blocks", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "Kids swim at pool", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "I draw pictures", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "We play hide and seek", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "I ride my skateboard", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "Kids play on swings", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "I dance to music", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "We fly kites", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "I play video games", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "Kids run in park", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-        { text: "I play with dolls", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "play" },
-
-        // Weather & Outdoors (10 sentences)
-        { text: "It is sunny", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
-        { text: "It rains today", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
-        { text: "Snow falls down", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
-        { text: "The wind blows", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
-        { text: "It is cold outside", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
-        { text: "I wear a jacket", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
-        { text: "The sun shines bright", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
-        { text: "It is warm today", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
-        { text: "I see a rainbow", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" },
-        { text: "The clouds are gray", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "weather" }
-    ];
-}
-
 // Initialize sentence library
-let sentences = createInitialSentences();
+let sentences = [];
 
 // Mistake bag structure (separate from main sentences)
 let mistakeBag = {
@@ -113,6 +28,117 @@ let petData = {
     type: "dog"
 };
 
+// Load sentences from embedded data
+function loadSentencesFromJSON() {
+    try {
+        // Embedded sentence data to avoid CORS issues when loading from file://
+        const jsonData = [
+  // Food & Drinks (15 sentences)
+  { "text": "I like apples", "difficulty": "easy", "category": "food" },
+  { "text": "I drink water", "difficulty": "easy", "category": "food" },
+  { "text": "We eat lunch", "difficulty": "easy", "category": "food" },
+  { "text": "Mom cooks dinner", "difficulty": "easy", "category": "food" },
+  { "text": "I want cookies", "difficulty": "easy", "category": "food" },
+  { "text": "Dad buys bread", "difficulty": "easy", "category": "food" },
+  { "text": "We have breakfast", "difficulty": "easy", "category": "food" },
+  { "text": "He likes pizza", "difficulty": "easy", "category": "food" },
+  { "text": "She drinks milk", "difficulty": "easy", "category": "food" },
+  { "text": "I eat bananas", "difficulty": "easy", "category": "food" },
+  { "text": "We cook rice", "difficulty": "easy", "category": "food" },
+  { "text": "They buy fruit", "difficulty": "easy", "category": "food" },
+  { "text": "I love ice cream", "difficulty": "easy", "category": "food" },
+  { "text": "She makes soup", "difficulty": "easy", "category": "food" },
+  { "text": "We drink juice", "difficulty": "easy", "category": "food" },
+
+  // Family & Home (15 sentences)
+  { "text": "Mom loves me", "difficulty": "easy", "category": "family" },
+  { "text": "Dad plays games", "difficulty": "easy", "category": "family" },
+  { "text": "I hug my sister", "difficulty": "easy", "category": "family" },
+  { "text": "Grandma tells stories", "difficulty": "easy", "category": "family" },
+  { "text": "I clean my room", "difficulty": "easy", "category": "family" },
+  { "text": "We watch TV", "difficulty": "easy", "category": "family" },
+  { "text": "I brush my teeth", "difficulty": "easy", "category": "family" },
+  { "text": "Family eats dinner", "difficulty": "easy", "category": "family" },
+  { "text": "I make my bed", "difficulty": "easy", "category": "family" },
+  { "text": "Dad drives the car", "difficulty": "easy", "category": "family" },
+  { "text": "Mom cooks food", "difficulty": "easy", "category": "family" },
+  { "text": "I call my friend", "difficulty": "easy", "category": "family" },
+  { "text": "We go to bed", "difficulty": "easy", "category": "family" },
+  { "text": "I wash my hands", "difficulty": "easy", "category": "family" },
+  { "text": "Brother reads books", "difficulty": "easy", "category": "family" },
+
+  // School & Learning (15 sentences)
+  { "text": "I go to school", "difficulty": "easy", "category": "school" },
+  { "text": "Teacher reads books", "difficulty": "easy", "category": "school" },
+  { "text": "I write with pencil", "difficulty": "easy", "category": "school" },
+  { "text": "Students sit desks", "difficulty": "easy", "category": "school" },
+  { "text": "I learn new words", "difficulty": "easy", "category": "school" },
+  { "text": "Kids play at recess", "difficulty": "easy", "category": "school" },
+  { "text": "I read books", "difficulty": "easy", "category": "school" },
+  { "text": "Teacher explains math", "difficulty": "easy", "category": "school" },
+  { "text": "I do homework", "difficulty": "easy", "category": "school" },
+  { "text": "School starts at nine", "difficulty": "easy", "category": "school" },
+  { "text": "I raise my hand", "difficulty": "easy", "category": "school" },
+  { "text": "We sing songs", "difficulty": "easy", "category": "school" },
+  { "text": "Art class is fun", "difficulty": "easy", "category": "school" },
+  { "text": "I study for tests", "difficulty": "easy", "category": "school" },
+  { "text": "Friends share toys", "difficulty": "easy", "category": "school" },
+
+  // Activities & Play (15 sentences)
+  { "text": "I play with toys", "difficulty": "easy", "category": "play" },
+  { "text": "Kids ride bikes", "difficulty": "easy", "category": "play" },
+  { "text": "I jump rope", "difficulty": "easy", "category": "play" },
+  { "text": "We play soccer", "difficulty": "easy", "category": "play" },
+  { "text": "I build with blocks", "difficulty": "easy", "category": "play" },
+  { "text": "Kids swim at pool", "difficulty": "easy", "category": "play" },
+  { "text": "I draw pictures", "difficulty": "easy", "category": "play" },
+  { "text": "We play hide and seek", "difficulty": "easy", "category": "play" },
+  { "text": "I ride my skateboard", "difficulty": "easy", "category": "play" },
+  { "text": "Kids play on swings", "difficulty": "easy", "category": "play" },
+  { "text": "I dance to music", "difficulty": "easy", "category": "play" },
+  { "text": "We fly kites", "difficulty": "easy", "category": "play" },
+  { "text": "I play video games", "difficulty": "easy", "category": "play" },
+  { "text": "Kids run in park", "difficulty": "easy", "category": "play" },
+  { "text": "I play with dolls", "difficulty": "easy", "category": "play" },
+
+  // Weather & Outdoors (10 sentences)
+  { "text": "It is sunny", "difficulty": "easy", "category": "weather" },
+  { "text": "It rains today", "difficulty": "easy", "category": "weather" },
+  { "text": "Snow falls down", "difficulty": "easy", "category": "weather" },
+  { "text": "The wind blows", "difficulty": "easy", "category": "weather" },
+  { "text": "It is cold outside", "difficulty": "easy", "category": "weather" },
+  { "text": "I wear a jacket", "difficulty": "easy", "category": "weather" },
+  { "text": "The sun shines bright", "difficulty": "easy", "category": "weather" },
+  { "text": "It is warm today", "difficulty": "easy", "category": "weather" },
+  { "text": "I see a rainbow", "difficulty": "easy", "category": "weather" },
+  { "text": "The clouds are gray", "difficulty": "easy", "category": "weather" }
+];
+
+        // Add default state properties to each sentence
+        sentences = jsonData.map(sentence => ({
+            text: sentence.text,
+            mastery: 0.0,           // Default mastery
+            lastReviewed: null,     // Last review time
+            incorrectCount: 0,      // Number of incorrect attempts
+            correctCount: 0,        // Number of correct attempts
+            difficulty: sentence.difficulty || "easy",  // Preserve difficulty or default to easy
+            category: sentence.category || "general"    // Preserve category or default to general
+        }));
+        
+        console.log(`Loaded and initialized ${sentences.length} sentences from embedded data`);
+        return sentences;
+    } catch (error) {
+        console.error('Error loading sentences:', error);
+        // Fallback: create basic sentences if loading fails
+        sentences = [
+            { text: "I like apples", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
+            { text: "I drink water", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" },
+            { text: "We eat lunch", mastery: 0.0, lastReviewed: null, incorrectCount: 0, correctCount: 0, difficulty: "easy", category: "food" }
+        ];
+        return sentences;
+    }
+}
+
 // Data utility functions
 const DataUtil = {
     // Get sentence by text
@@ -131,17 +157,10 @@ const DataUtil = {
         let sentence = this.getSentenceByText(text);
         
         if (!sentence) {
-            // If sentence doesn't exist, create it
-            sentence = {
-                text: text,
-                mastery: masteryScore,
-                lastReviewed: new Date(),
-                incorrectCount: isCorrect === false ? 1 : 0,
-                correctCount: isCorrect === true ? 1 : 0,
-                difficulty: "medium", // Default difficulty
-                category: "general" // Default category
-            };
-            sentences.push(sentence);
+            // If sentence doesn't exist in the predefined list, log an error
+            // This should not happen in normal operation since all sentences are preloaded
+            console.error(`Sentence not found in predefined list: ${text}`);
+            return null;
         } else {
             sentence.mastery = masteryScore;
             sentence.lastReviewed = new Date();
@@ -301,15 +320,38 @@ const DataUtil = {
     
     // Core data operations
     initializeData: function() {
+        // First, load the base sentence library from embedded data
+        loadSentencesFromJSON();
+        
         const savedData = localStorage.getItem('wordpet-data');
         if (savedData) {
             try {
                 const parsed = JSON.parse(savedData);
                 
-                // Update sentences array in place 
-                if (parsed.sentences) {
-                    sentences.length = 0;  // Clear existing array
-                    parsed.sentences.forEach(s => sentences.push(s));  // Add loaded sentences
+                // Update sentences array - merge saved mastery data with loaded sentences
+                if (parsed.sentences && sentences && sentences.length > 0) {
+                    // Create a map of saved sentences by text
+                    const savedSentenceMap = {};
+                    parsed.sentences.forEach(s => {
+                        savedSentenceMap[s.text] = s;
+                    });
+                    
+                    // Update the loaded sentences with saved mastery data
+                    sentences.forEach((sentence, index) => {
+                        const savedSentence = savedSentenceMap[sentence.text];
+                        if (savedSentence) {
+                            // Only update the mastery-related fields, keep text, difficulty, and category
+                            sentence.mastery = savedSentence.mastery || 0.0;
+                            sentence.lastReviewed = savedSentence.lastReviewed || null;
+                            sentence.incorrectCount = savedSentence.incorrectCount || 0;
+                            sentence.correctCount = savedSentence.correctCount || 0;
+                        }
+                        // If sentence is not in saved data, it will keep the default values we set when loading
+                    });
+                    
+                    // Handle any new sentences that were added to the JSON after user data was saved
+                    // Add any missing sentences from the JSON file with default values
+                    // (This is already handled by the map approach)
                 }
                 
                 // Update mistakeBag properties in place
@@ -358,7 +400,7 @@ const DataUtil = {
     
     saveData: function() {
         const dataToSave = {
-            sentences,
+            sentences, // This will include all sentence data with mastery info
             mistakeBag,
             petData,
             failedSentences // Include failed sentences in saved data

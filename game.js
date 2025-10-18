@@ -1018,16 +1018,23 @@ const GameManager = {
 
 // Initialize the game when the page loads
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize data first to ensure saved data is loaded
-    if (typeof data !== 'undefined' && data.DataUtil) {
-        data.DataUtil.initializeData();
-    }
-    
     // Wait for all dependencies to load
     const checkDependencies = setInterval(function() {
-        if (typeof utils !== 'undefined' && typeof data !== 'undefined') {
+        if (typeof utils !== 'undefined' && typeof data !== 'undefined' && typeof data.DataUtil !== 'undefined') {
             clearInterval(checkDependencies);
-            GameManager.init();
+            try {
+                // Initialize data first to ensure saved data is loaded
+                data.DataUtil.initializeData();
+                
+                // Ensure pet manager is available before initializing
+                if (typeof data.PetManager !== 'undefined') {
+                    GameManager.init();
+                } else {
+                    console.error("PetManager not available after data initialization");
+                }
+            } catch (error) {
+                console.error("Error during game initialization:", error);
+            }
         } else {
             console.log("Waiting for dependencies...");
         }
