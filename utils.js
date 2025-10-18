@@ -74,7 +74,10 @@ const StorageUtil = {
                     appState.player.coins = parsed.player.coins !== undefined ? parsed.player.coins : appState.player.coins;
                     appState.player.stamina = parsed.player.stamina !== undefined ? parsed.player.stamina : appState.player.stamina;
                     appState.player.maxStamina = parsed.player.maxStamina !== undefined ? parsed.player.maxStamina : appState.player.maxStamina;
-                    appState.player.staminaRechargeTime = parsed.player.staminaRechargeTime !== undefined ? parsed.player.staminaRechargeTime : appState.player.staminaRechargeTime;
+                    // For backward compatibility: if staminaRechargeTime is the old default (30 minutes), set to the new default (1 minute)
+                    appState.player.staminaRechargeTime = parsed.player.staminaRechargeTime !== undefined ? 
+                        (parsed.player.staminaRechargeTime === 1800000 ? 60000 : parsed.player.staminaRechargeTime) : 
+                        appState.player.staminaRechargeTime;
                     
                     // Handle date conversion for lastStaminaUpdate
                     if (parsed.player.lastStaminaUpdate) {
@@ -83,6 +86,9 @@ const StorageUtil = {
                         } else {
                             appState.player.lastStaminaUpdate = parsed.player.lastStaminaUpdate; // Already a Date object
                         }
+                    } else {
+                        // Default to a very old date (2001-01-01) to ensure full stamina recovery on first load for old saves
+                        appState.player.lastStaminaUpdate = new Date('2001-01-01');
                     }
                     
                     appState.player.totalSentencesCompleted = parsed.player.totalSentencesCompleted !== undefined ? parsed.player.totalSentencesCompleted : appState.player.totalSentencesCompleted;
@@ -124,8 +130,8 @@ const StorageUtil = {
                 coins: 0,
                 stamina: 5,
                 maxStamina: 5,
-                staminaRechargeTime: 1800000,
-                lastStaminaUpdate: new Date(),
+                staminaRechargeTime: 60000, // 1 minute in ms
+                lastStaminaUpdate: new Date('2001-01-01'),
                 totalSentencesCompleted: 0,
                 totalMistakesMade: 0,
                 currentCombo: 0,
@@ -159,22 +165,17 @@ const TimeUtil = {
         
         console.log("Stamina update check - Elapsed:", elapsed, "ms, Interval:", rechargeInterval, "ms");
         
-        // Calculate how many stamina points to restore
-        const staminaPointsToRestore = Math.floor(elapsed / rechargeInterval);
-        
-        if (staminaPointsToRestore > 0) {
+        // If the elapsed time is equal to or greater than the recharge interval
+        // and the player's stamina is less than the max, restore all stamina at once
+        if (elapsed >= rechargeInterval && appState.player.stamina < appState.player.maxStamina) {
             const oldStamina = appState.player.stamina;
-            // Add stamina but not beyond max
-            appState.player.stamina = Math.min(
-                appState.player.maxStamina,
-                appState.player.stamina + staminaPointsToRestore
-            );
+            // Restore all stamina at once when the interval has passed
+            appState.player.stamina = appState.player.maxStamina;
             
-            console.log("Restoring stamina - Old:", oldStamina, "Restored:", staminaPointsToRestore, "New:", appState.player.stamina);
+            console.log("Fully restoring stamina - Old:", oldStamina, "New:", appState.player.stamina);
             
-            // Update the last update time
-            const remainingMs = elapsed % rechargeInterval;
-            appState.player.lastStaminaUpdate = new Date(now.getTime() - remainingMs);
+            // Update the last update time to now to reset the timer
+            appState.player.lastStaminaUpdate = now;
             
             // Save updated state
             StorageUtil.saveState();

@@ -58,8 +58,10 @@ const GameManager = {
         
         gameState.currentSentence = sentence;
         
-        // Update stamina (decrease by 1 for every 20 sentences completed)
+        // Update stamina (reduce by 1 when starting the puzzle)
         if (typeof utils !== 'undefined' && utils.StorageUtil) {
+            utils.appState.player.stamina = Math.max(0, utils.appState.player.stamina - 1);
+            utils.StorageUtil.saveState();
         } else {
             console.error("Utils module not loaded properly");
         }
@@ -591,11 +593,15 @@ const GameManager = {
         
         const statsContainer = document.getElementById('player-stats');
         if (statsContainer) {
+            // Highlight low stamina with special styling
+            const staminaClass = utils.appState.player.stamina <= 0 ? 'stat stat-low' : 'stat';
+            const staminaDisplay = `<div class="${staminaClass}">Stamina: ${utils.appState.player.stamina}/${utils.appState.player.maxStamina}</div>`;
+            
             statsContainer.innerHTML = `
                 <div class="stat-item">
                     <div class="stat">Level: ${utils.appState.player.level}</div>
                     <div class="stat">Coins: ${utils.appState.player.coins}</div>
-                    <div class="stat">Stamina: ${utils.appState.player.stamina}/${utils.appState.player.maxStamina}</div>
+                    ${staminaDisplay}
                 </div>
                 <div class="stat-item">
                     <div class="stat">Combo: ${utils.appState.player.currentCombo}</div>
@@ -656,6 +662,15 @@ const GameManager = {
                 this.startSentencePuzzle();
             };
             startBtn.addEventListener('click', this._startPracticeHandler);
+            
+            // Disable the button if stamina is 0
+            if (utils.appState.player.stamina <= 0) {
+                startBtn.disabled = true;
+                startBtn.title = "Out of stamina! Come back later.";
+            } else {
+                startBtn.disabled = false;
+                startBtn.title = "";
+            }
         }
         
         if (continuousBtn) {
@@ -664,6 +679,15 @@ const GameManager = {
                 this.startContinuousMode();
             };
             continuousBtn.addEventListener('click', this._continuousModeHandler);
+            
+            // Disable continuous mode button if stamina is 0
+            if (utils.appState.player.stamina <= 0) {
+                continuousBtn.disabled = true;
+                continuousBtn.title = "Out of stamina! Come back later.";
+            } else {
+                continuousBtn.disabled = false;
+                continuousBtn.title = "";
+            }
         }
         
         if (reviewBtn) {
@@ -673,6 +697,15 @@ const GameManager = {
                 this.startMistakeReview();
             };
             reviewBtn.addEventListener('click', this._reviewHandler);
+            
+            // Also disable review if stamina is 0 (since it starts a sentence puzzle)
+            if (utils.appState.player.stamina <= 0) {
+                reviewBtn.disabled = true;
+                reviewBtn.title = "Out of stamina! Come back later.";
+            } else {
+                reviewBtn.disabled = false;
+                reviewBtn.title = "";
+            }
         }
         
         if (petCareBtn) {
@@ -865,6 +898,11 @@ const GameManager = {
         // Load saved state
         utils.StorageUtil.loadState();
         console.log("Initial player state loaded:", utils.appState.player);
+        
+        // Update stamina to account for any time passed since last session
+        if (typeof utils !== 'undefined' && utils.TimeUtil) {
+            utils.TimeUtil.updateStamina();
+        }
         
         // Initialize pet system
         data.PetManager.init();

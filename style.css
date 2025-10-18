@@ -121,6 +121,23 @@ h3 {
   box-shadow: 0 6px 12px rgba(52, 168, 83, 0.4);
 }
 
+/* Disabled button styles */
+.btn-primary:disabled, .btn-secondary:disabled {
+  opacity: 0.5;
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-primary:disabled:hover, .btn-primary:disabled:focus,
+.btn-secondary:disabled:hover, .btn-secondary:disabled:focus {
+  background-color: #cccccc;
+  transform: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
 /* Player XP display */
 #player-xp-display {
   background-color: #e8f0fe;
@@ -346,6 +363,18 @@ h3 {
   border-radius: 20px;
   font-weight: bold;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.stat-low {
+  background-color: #ffebee;
+  color: #c62828;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
 /* Feedback messages */
