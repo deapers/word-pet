@@ -62,7 +62,7 @@ const GameManager = {
         
         gameState.currentSentence = sentence;
         
-        // Update stamina (reduce by 1 when starting the puzzle)
+        // Update stamina (reduce by 1 when starting the puzzle for "Start Practice" mode)
         if (typeof utils !== 'undefined' && utils.StorageUtil) {
             utils.appState.player.stamina = Math.max(0, utils.appState.player.stamina - 1);
             utils.StorageUtil.saveState();
@@ -412,9 +412,17 @@ const GameManager = {
         
         if (isCorrect) {
             // Move to next sentence after successful answer
-            setTimeout(() => {
-                this.moveToNextSentence();
-            }, 1500);
+            if (gameState.isInContinuousMode) {
+                // In continuous mode, move to next sentence
+                setTimeout(() => {
+                    this.moveToNextSentence();
+                }, 1500);
+            } else {
+                // In normal mode, return to home screen
+                setTimeout(() => {
+                    this.showNextSentence();
+                }, 1500);
+            }
         } else {
             // Show error but keep game active so user can try again
             this.showFeedback("Try again! Arrange the words to form the correct sentence.", "error");
@@ -483,7 +491,7 @@ const GameManager = {
                 this.showNextSentence();  // This returns to home screen
             }, 1500);
         } else {
-            // Otherwise, get a new sentence without consuming stamina (since we already deducted it)
+            // Otherwise, get a new sentence
             setTimeout(() => {
                 // Get next sentence (with 30% priority for mistake bag items)
                 const sentence = data.DataUtil.getNextSentence();
@@ -495,8 +503,6 @@ const GameManager = {
                 
                 gameState.currentSentence = sentence;
                 
-                // Update stamina (reduce by 1 when starting the puzzle)
-                // NOTE: We don't reduce stamina here since we already did when the original puzzle started
                 // Scramble the sentence words
                 this.scrambleSentence(sentence.text);
                 
@@ -510,6 +516,9 @@ const GameManager = {
     showNextSentence: function() {
         // Reset the skip counter when returning to home screen
         gameState.sentencesSkipped = 0;
+        
+        // Reset continuous mode flag when returning to home screen
+        gameState.isInContinuousMode = false;
         
         // Switch back to home screen
         document.getElementById('game-screen').classList.remove('active');
@@ -587,17 +596,6 @@ const GameManager = {
         
         gameState.currentSentence = sentence;
         
-        // Update stamina (decrease by 1 for every 20 sentences completed)
-        if (typeof utils !== 'undefined' && utils.StorageUtil) {
-            utils.appState.player.stamina = Math.max(0, utils.appState.player.stamina - 1);
-            utils.StorageUtil.saveState();
-        } else {
-            console.error("Utils module not loaded properly");
-        }
-        
-        // Update UI to show updated stamina
-        this.updatePlayerStats();
-        
         // Scramble the sentence words
         this.scrambleSentence(sentence.text);
         
@@ -619,6 +617,9 @@ const GameManager = {
         // Reset skip counter when starting continuous mode
         gameState.sentencesSkipped = 0;
         
+        // Set continuous mode flag
+        gameState.isInContinuousMode = true;
+        
         // Show first sentence
         this.showNextSentenceInContinuousMode();
     },
@@ -635,6 +636,9 @@ const GameManager = {
     returnToHome: function() {
         // Reset the skip counter when returning to home screen
         gameState.sentencesSkipped = 0;
+        
+        // Reset continuous mode flag when returning to home screen
+        gameState.isInContinuousMode = false;
         
         console.log("Returning to home - Current player state:", utils.appState.player);
         
@@ -809,6 +813,9 @@ const GameManager = {
         // Show a random sentence from the mistake bag
         const randomIndex = Math.floor(Math.random() * mistakeSentences.length);
         gameState.currentSentence = mistakeSentences[randomIndex];
+        
+        // For mistake review, we do NOT consume stamina when starting the review
+        // (This is a special mode to practice difficult sentences without stamina cost)
         
         // Proceed with the review (same as normal sentence puzzle for now)
         this.scrambleSentence(gameState.currentSentence.text);

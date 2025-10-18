@@ -160,3 +160,6 @@ The project follows an MVP (Minimum Viable Product) approach with fully implemen
 - **Gamification**: Pet animations, coins/food, and combo rewards
 - **Anti-addiction**: Daily stamina limits and offline growth mechanisms
 - **Accessibility**: Text-to-speech, large touch targets, and keyboard navigation support
+
+## Qwen Added Memories
+- 在进行任何编码工作之前，必须遵循SDD（Specification-Driven Development）原则，先在specs/目录中创建或更新相关的spec文档，然后由用户确认之后，然后再进行代码实现。
