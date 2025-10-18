@@ -20,6 +20,13 @@ let mistakeBag = {
     reviewPriority: 0.3 // 30% chance of showing mistake bag sentences
 };
 
+// Separate structure for failed sentences (distinct from mistake bag)
+let failedSentences = {
+    sentences: [], // List of sentences the user got wrong
+    failureCounts: {}, // Track how many times each sentence was failed
+    lastFailedDate: {} // Track when each sentence was last failed
+};
+
 let petData = {
     level: 1,
     exp: 0,
@@ -94,6 +101,44 @@ const DataUtil = {
         return sentences.filter(sentence => sentence.difficulty === difficulty);
     },
     
+    // Failed sentences functions
+    addSentenceToFailedList: function(text) {
+        // Check if sentence already exists in failed list
+        if (!failedSentences.sentences.includes(text)) {
+            failedSentences.sentences.push(text);
+            failedSentences.failureCounts[text] = 1;
+        } else {
+            // Increment failure count
+            failedSentences.failureCounts[text] = (failedSentences.failureCounts[text] || 0) + 1;
+        }
+        
+        // Update last failed date
+        failedSentences.lastFailedDate[text] = new Date().toISOString();
+        
+        // Save updated data
+        this.saveData();
+    },
+    
+    // Get failed sentences
+    getFailedSentences: function() {
+        return failedSentences.sentences.map(text => this.getSentenceByText(text)).filter(Boolean);
+    },
+    
+    // Get failure count for a sentence
+    getFailureCount: function(text) {
+        return failedSentences.failureCounts[text] || 0;
+    },
+    
+    // Remove sentence from failed list (when mastered)
+    removeSentenceFromFailedList: function(text) {
+        failedSentences.sentences = failedSentences.sentences.filter(item => item !== text);
+        delete failedSentences.failureCounts[text];
+        delete failedSentences.lastFailedDate[text];
+        
+        // Save updated data
+        this.saveData();
+    },
+    
     // Mistake bag functions
     addSentenceToMistakeBag: function(text) {
         if (!mistakeBag.sentences.includes(text)) {
@@ -149,18 +194,20 @@ const DataUtil = {
                 sentences = parsed.sentences || sentences;
                 mistakeBag = parsed.mistakeBag || mistakeBag;
                 petData = parsed.petData || petData;
+                failedSentences = parsed.failedSentences || failedSentences; // Load failed sentences
             } catch (e) {
                 console.error('Error loading data from localStorage:', e);
             }
         }
-        return { sentences, mistakeBag, petData };
+        return { sentences, mistakeBag, petData, failedSentences }; // Return failed sentences too
     },
     
     saveData: function() {
         const dataToSave = {
             sentences,
             mistakeBag,
-            petData
+            petData,
+            failedSentences // Include failed sentences in saved data
         };
         localStorage.setItem('wordpet-data', JSON.stringify(dataToSave));
     },
@@ -183,6 +230,11 @@ const DataUtil = {
             sentences: [],
             lastReviewDate: null,
             reviewPriority: 0.3
+        };
+        failedSentences = {
+            sentences: [], // Reset failed sentences list
+            failureCounts: {}, // Reset failure counts
+            lastFailedDate: {} // Reset failed dates
         };
         petData = {
             level: 1,

@@ -130,7 +130,7 @@ h2 {
   background-color: var(--child-friendly-blue);
   border: 2px solid #a0c4ff;
   border-radius: 8px;
-  cursor: grab;
+  cursor: pointer; /* Changed from grab to pointer for click interaction */
   user-select: none;
   font-size: var(--font-size-large);
   font-weight: bold;
@@ -142,12 +142,12 @@ h2 {
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.word-tile:active {
-  cursor: grabbing;
+.word-tile:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-.word-tile.dragging {
-  opacity: 0.8;
+.word-tile:active {
   transform: scale(0.95);
 }
 
@@ -159,23 +159,6 @@ h2 {
 .word-tile.incorrect {
   background-color: var(--error-color);
   color: white;
-}
-
-.drag-target {
-  min-width: 60px;
-  min-height: var(--touch-target-size);
-  border: 2px dashed #ccc;
-  border-radius: 8px;
-  margin: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #f9f9f9;
-}
-
-.drag-target.over {
-  border: 2px solid var(--primary-color);
-  background-color: #e8f0fe;
 }
 
 .sentence-display {
@@ -199,6 +182,24 @@ h2 {
   background-color: white;
   border: 1px solid #ddd;
   border-radius: 6px;
+  cursor: pointer;
+}
+
+.sentence-word:hover {
+  background-color: #e8f0fe;
+}
+
+#game-controls {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+#game-controls .btn-primary,
+#game-controls .btn-secondary {
+  min-width: 120px;
 }
 
 /* Pet display */

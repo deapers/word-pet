@@ -7,7 +7,9 @@ let gameState = {
     userSelection: [],
     isGameActive: false,
     lastFeedback: null,
-    feedbackTimeout: null
+    feedbackTimeout: null,
+    sentencesCompleted: 0, // Track sentences completed in continuous mode
+    isInContinuousMode: false // Track if in continuous mode
 };
 
 // Main game functions
@@ -139,6 +141,11 @@ const GameManager = {
                 data.DataUtil.removeSentenceFromMistakeBag(gameState.currentSentence.text);
                 data.DataUtil.saveData(); // Save the updated mistake bag
             }
+            
+            // Also remove from failed sentences list when mastered
+            if (newMastery >= 0.8) {
+                data.DataUtil.removeSentenceFromFailedList(gameState.currentSentence.text);
+            }
         } else {
             // Decrease mastery on incorrect answer
             newMastery = Math.max(0.0, currentMastery - 0.05);
@@ -152,6 +159,11 @@ const GameManager = {
                 if (typeof data !== 'undefined' && data.DataUtil) {
                     data.DataUtil.addSentenceToMistakeBag(gameState.currentSentence.text);
                 }
+            }
+            
+            // Also add to failed sentences list
+            if (typeof data !== 'undefined' && data.DataUtil) {
+                data.DataUtil.addSentenceToFailedList(gameState.currentSentence.text);
             }
             
             // Update sentence mastery - incorrect
@@ -210,45 +222,45 @@ const GameManager = {
         
         // Create the puzzle interface
         container.innerHTML = `
-            <h3>Arrange the words to form a correct sentence:</h3>
+            <h3>Tap words to form a correct sentence:</h3>
             <div id="sentence-target" class="sentence-display">
-                <p>Drag words here to form your sentence</p>
+                <!-- Words will be placed here by clicking -->
             </div>
             <div id="sentence-words" class="sentence-words-container">
             </div>
-            <button id="check-sentence-btn" class="btn-primary">Check Answer</button>
-            <button id="skip-sentence-btn" class="btn-secondary">Skip Sentence</button>
+            <div id="game-controls">
+                <button id="commit-btn" class="btn-primary">Commit Answer</button>
+                <button id="skip-btn" class="btn-secondary">Skip Sentence</button>
+                <button id="back-home-btn" class="btn-secondary">Back to Home</button>
+            </div>
         `;
         
-        // Add the scrambled words
+        // Add the scrambled words that can be clicked
         const wordsContainer = document.getElementById('sentence-words');
         gameState.scrambledWords.forEach((word, index) => {
             const wordElement = document.createElement('div');
             wordElement.className = 'word-tile';
             wordElement.textContent = word;
-            wordElement.draggable = true;
             wordElement.setAttribute('data-word', word);
             wordElement.id = `word-${index}`;
             
-            // Add drag event listeners
-            wordElement.addEventListener('dragstart', this.handleDragStart);
-            wordElement.addEventListener('dragend', this.handleDragEnd);
+            // Add click event to place word in sentence target
+            wordElement.addEventListener('click', this.handleWordClick);
             
             wordsContainer.appendChild(wordElement);
         });
         
-        // Add drop targets for the sentence
-        const sentenceTarget = document.getElementById('sentence-target');
-        sentenceTarget.addEventListener('dragover', this.handleDragOver);
-        sentenceTarget.addEventListener('drop', this.handleDrop);
-        
         // Add event listeners for buttons
-        document.getElementById('check-sentence-btn').addEventListener('click', () => {
-            this.checkCurrentSentence();
+        document.getElementById('commit-btn').addEventListener('click', () => {
+            this.commitCurrentSentence();
         });
         
-        document.getElementById('skip-sentence-btn').addEventListener('click', () => {
+        document.getElementById('skip-btn').addEventListener('click', () => {
             this.skipCurrentSentence();
+        });
+        
+        document.getElementById('back-home-btn').addEventListener('click', () => {
+            this.returnToHome();
         });
     },
     
@@ -291,6 +303,42 @@ const GameManager = {
         sentenceTarget.appendChild(wordSpan);
     },
     
+    // Handle word click (new click-based interaction)
+    handleWordClick: function(e) {
+        const word = e.target.getAttribute('data-word');
+        const sentenceTarget = document.getElementById('sentence-target');
+        
+        // Create a word element in the sentence target
+        const wordSpan = document.createElement('span');
+        wordSpan.className = 'sentence-word';
+        wordSpan.textContent = word;
+        wordSpan.setAttribute('data-word', word);
+        
+        // Add event listener to allow removing words by clicking
+        wordSpan.addEventListener('click', function() {
+            if (gameState.isGameActive) {
+                // Remove from sentence target and return to word bank
+                wordSpan.remove();
+                // Find the original word in the word bank and make it visible again
+                const wordBank = document.getElementById('sentence-words');
+                if (wordBank) {
+                    // Create a new word tile in the word bank
+                    const wordTile = document.createElement('div');
+                    wordTile.className = 'word-tile';
+                    wordTile.textContent = word;
+                    wordTile.setAttribute('data-word', word);
+                    wordTile.addEventListener('click', GameManager.handleWordClick);
+                    wordBank.appendChild(wordTile);
+                }
+            }
+        });
+        
+        sentenceTarget.appendChild(wordSpan);
+        
+        // Remove the clicked word from the word bank
+        e.target.remove();
+    },
+    
     // Add keyboard navigation support for accessibility
     setupKeyboardNavigation: function() {
         // Add keyboard event listeners for accessibility
@@ -316,7 +364,28 @@ const GameManager = {
         });
     },
     
-    // Check the current sentence arrangement
+    // Commit the current sentence arrangement
+    commitCurrentSentence: function() {
+        if (!gameState.isGameActive) return;
+        
+        const sentenceTarget = document.getElementById('sentence-target');
+        const wordElements = sentenceTarget.querySelectorAll('.sentence-word');
+        const wordsArray = Array.from(wordElements).map(el => el.getAttribute('data-word'));
+        
+        const isCorrect = this.checkSentenceAnswer(wordsArray);
+        
+        if (isCorrect) {
+            // Move to next sentence after successful answer
+            setTimeout(() => {
+                this.moveToNextSentence();
+            }, 1500);
+        } else {
+            // Show error but keep game active so user can try again
+            this.showFeedback("Try again! Arrange the words to form the correct sentence.", "error");
+        }
+    },
+    
+    // Check the current sentence arrangement (original function)
     checkCurrentSentence: function() {
         if (!gameState.isGameActive) return;
         
@@ -377,6 +446,90 @@ const GameManager = {
         this.updateHomeScreen();
     },
     
+    // Move to next sentence in continuous mode
+    moveToNextSentence: function() {
+        // Check if we've reached the sentence limit (50 sentences)
+        if (gameState.sentencesCompleted >= 50) {
+            this.endContinuousMode();
+            return;
+        }
+        
+        // Increment counter
+        gameState.sentencesCompleted++;
+        
+        // Show next sentence
+        this.showNextSentenceInContinuousMode();
+    },
+    
+    // Skip current sentence
+    skipCurrentSentence: function() {
+        this.showFeedback("Sentence skipped.", "error");
+        
+        // After a delay, move to next sentence
+        setTimeout(() => {
+            this.showNextSentence();
+        }, 1500);
+    },
+    
+    // Show next sentence in continuous mode
+    showNextSentenceInContinuousMode: function() {
+        // Get next sentence (with 30% priority for mistake bag items)
+        const sentence = data.DataUtil.getNextSentence();
+        if (!sentence) {
+            this.showFeedback("No more sentences available!", "error");
+            this.returnToHome();
+            return;
+        }
+        
+        gameState.currentSentence = sentence;
+        
+        // Update stamina (decrease by 1)
+        utils.appState.player.stamina = Math.max(0, utils.appState.player.stamina - 1);
+        utils.StorageUtil.saveState();
+        
+        // Update UI to show updated stamina
+        this.updatePlayerStats();
+        
+        // Scramble the sentence words
+        this.scrambleSentence(sentence.text);
+        
+        // Display the game interface
+        this.displaySentencePuzzle();
+        
+        // Update game state
+        gameState.isGameActive = true;
+        
+        // Show progress
+        this.showFeedback(`Sentence ${gameState.sentencesCompleted}/50`, "success");
+    },
+    
+    // Start continuous game mode
+    startContinuousMode: function() {
+        // Reset sentence counter
+        gameState.sentencesCompleted = 0;
+        
+        // Show first sentence
+        this.showNextSentenceInContinuousMode();
+    },
+    
+    // End continuous mode
+    endContinuousMode: function() {
+        this.showFeedback(`Congratulations! You've completed ${gameState.sentencesCompleted} sentences!`, "success");
+        setTimeout(() => {
+            this.returnToHome();
+        }, 3000);
+    },
+    
+    // Return to home screen
+    returnToHome: function() {
+        // Switch back to home screen
+        document.getElementById('game-screen').classList.remove('active');
+        document.getElementById('home-screen').classList.add('active');
+        
+        // Update the home screen display
+        this.updateHomeScreen();
+    },
+    
     // Update player stats display
     updatePlayerStats: function() {
         if (typeof utils === 'undefined') {
@@ -412,6 +565,10 @@ const GameManager = {
         // Update the home screen buttons
         document.getElementById('start-practice-btn').addEventListener('click', () => {
             this.startSentencePuzzle();
+        });
+        
+        document.getElementById('continuous-mode-btn').addEventListener('click', () => {
+            this.startContinuousMode();
         });
         
         document.getElementById('review-btn').addEventListener('click', () => {
