@@ -569,46 +569,7 @@ const GameManager = {
         this.showNextSentenceInContinuousMode();
     },
     
-    // Skip current sentence
-    skipCurrentSentence: function() {
-        this.showFeedback("Sentence skipped.", "error");
-        
-        // Increment the skip counter
-        gameState.sentencesSkipped++;
-        
-        if (gameState.sentencesSkipped >= 5) {
-            // After 5 skips, return to home screen
-            this.showFeedback("You've skipped 5 sentences. Returning to home.", "error");
-            setTimeout(() => {
-                this.showNextSentence();  // This returns to home screen
-            }, 1500);
-        } else {
-            // Otherwise, get a new sentence without consuming additional stamina (since skipping doesn't attempt the sentence)
-            setTimeout(() => {
-                // Get next sentence (with 30% priority for mistake bag items) without consuming stamina
-                const sentence = data.DataUtil.getNextSentence();
-                if (!sentence) {
-                    this.showFeedback("No more sentences available!", "error");
-                    this.returnToHome();
-                    return;
-                }
-                
-                gameState.currentSentence = sentence;
-                
-                // Scramble the sentence words
-                this.scrambleSentence(sentence.text);
-                
-                // Display the game interface with the new sentence
-                this.displaySentencePuzzle();
-                
-                // Update game state
-                gameState.isGameActive = true;
-                
-                // Show progress in continuous mode
-                this.showFeedback(`Sentence ${gameState.sentencesCompleted}/50`, "success");
-            }, 1500);
-        }
-    },
+
     
     // Show next sentence in continuous mode
     showNextSentenceInContinuousMode: function() {
