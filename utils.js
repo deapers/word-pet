@@ -12,7 +12,9 @@ let appState = {
         totalSentencesCompleted: 0,
         totalMistakesMade: 0,
         currentCombo: 0,
-        maxCombo: 0
+        maxCombo: 0,
+        avatar: '😊', // Default avatar
+        avatarLevel: 1 // Track avatar level separately if needed
     },
     settings: {
         volume: 0.8,
@@ -95,6 +97,10 @@ const StorageUtil = {
                     appState.player.totalMistakesMade = parsed.player.totalMistakesMade !== undefined ? parsed.player.totalMistakesMade : appState.player.totalMistakesMade;
                     appState.player.currentCombo = parsed.player.currentCombo !== undefined ? parsed.player.currentCombo : appState.player.currentCombo;
                     appState.player.maxCombo = parsed.player.maxCombo !== undefined ? parsed.player.maxCombo : appState.player.maxCombo;
+                    
+                    // Load avatar fields with backward compatibility
+                    appState.player.avatar = parsed.player.avatar !== undefined ? parsed.player.avatar : '😊';
+                    appState.player.avatarLevel = parsed.player.avatarLevel !== undefined ? parsed.player.avatarLevel : 1;
                 }
                 
                 if (parsed.settings) {
@@ -135,7 +141,9 @@ const StorageUtil = {
                 totalSentencesCompleted: 0,
                 totalMistakesMade: 0,
                 currentCombo: 0,
-                maxCombo: 0
+                maxCombo: 0,
+                avatar: '😊', // Default avatar
+                avatarLevel: 1 // Track avatar level separately if needed
             },
             settings: {
                 volume: 0.8,
@@ -229,12 +237,47 @@ const RandomUtil = {
     }
 };
 
+// Player avatar management
+const AvatarManager = {
+    // Define avatar stages based on player level
+    getAvatarForLevel: function(level) {
+        if (level >= 20) {
+            // Advanced level: superhero or crown
+            return ['🦸‍♂️', '🦸‍♀️', '👑'][Math.min(level - 20, 2)];
+        } else if (level >= 10) {
+            // Intermediate level: cool expressions
+            return ['😎', '🤩', '🥳'][Math.min(level - 10, 2)];
+        } else {
+            // Initial level: basic smiley faces
+            return ['😊', '😄', '😆'][Math.min(level - 1, 2)];
+        }
+    },
+    
+    // Update player avatar based on current level
+    updatePlayerAvatar: function() {
+        const currentLevel = utils.appState.player.level;
+        utils.appState.player.avatar = this.getAvatarForLevel(currentLevel);
+        
+        // Save updated state
+        utils.StorageUtil.saveState();
+        
+        // Update UI to reflect avatar change
+        if (window.GameManager) {
+            window.GameManager.updatePlayerStatsUI();
+        }
+        
+        // Return the new avatar for potential use
+        return utils.appState.player.avatar;
+    }
+};
+
 // Make utilities available globally for browser (with initial state)
 window.utils = {
     StorageUtil,
     TimeUtil,
     ValidationUtil,
     RandomUtil,
+    AvatarManager,
     appState
 };
 
@@ -243,6 +286,11 @@ StorageUtil.loadState();
 
 // Update the global appState reference after loading (to ensure it reflects saved data)
 window.utils.appState = appState;
+
+// Initialize player avatar based on current level
+if (window.utils && window.utils.AvatarManager) {
+    window.utils.AvatarManager.updatePlayerAvatar();
+}
 
 // Export for use in other modules (if using module system)
 if (typeof module !== 'undefined' && module.exports) {

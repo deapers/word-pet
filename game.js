@@ -233,8 +233,16 @@ const GameManager = {
         // you'd have player leveling rules
         // For simplicity, we're not implementing player levels separately from pet levels
         
+        // Store the old level to check if it changed
+        const oldLevel = utils.appState.player.level;
+        
         // Update player experience
         utils.appState.player.level = Math.floor((utils.appState.player.totalSentencesCompleted + utils.appState.player.totalMistakesMade) / 10) + 1;
+        
+        // If the level changed, update the player's avatar
+        if (oldLevel !== utils.appState.player.level && window.utils && window.utils.AvatarManager) {
+            window.utils.AvatarManager.updatePlayerAvatar();
+        }
         
         return utils.appState.player.level;
     },
@@ -704,6 +712,7 @@ const GameManager = {
             const staminaDisplay = `<div class="${staminaClass}">Stamina: ${utils.appState.player.stamina}/${utils.appState.player.maxStamina}</div>`;
             
             statsContainer.innerHTML = `
+                <div class="player-avatar">${utils.appState.player.avatar}</div>
                 <div class="stat-item">
                     <div class="stat">Level: ${utils.appState.player.level}</div>
                     <div class="stat">Coins: ${utils.appState.player.coins}</div>
