@@ -55,22 +55,22 @@ Foundational tasks for WordPet:
 
 ## Phase 3: User Story 1 - Sentence Practice Game (Priority: P1) 🎯 MVP
 
-**Goal**: Enable 6-12 year old child to practice forming sentences by dragging and arranging words with positive feedback
+**Goal**: Enable 6-12 year old child to practice forming sentences by tapping words to arrange them with positive feedback
 
-**Independent Test**: Child can successfully drag words to form a sentence and receive positive feedback when correct, with gentle encouragement when incorrect.
+**Independent Test**: Child can successfully tap words to form a sentence and receive positive feedback when correct, with gentle encouragement when incorrect.
 
 ### Implementation for User Story 1
 
 - [x] T014 [P] [US1] Implement sentence scrambling algorithm in game.js
-- [x] T015 [US1] Create drag-and-drop UI component with large touch targets for children in index.html and style.css
-- [x] T016 [US1] Implement visual sentence puzzle display with words to drag in index.html and style.css
+- [✓] T015 [US1] Create tap-based UI component with large touch targets for children in index.html and style.css
+- [x] T016 [US1] Implement visual sentence puzzle display with words to tap in index.html and style.css
 - [x] T017 [US1] Implement sentence validation logic with positive feedback (coins, experience) in game.js
 - [x] T018 [US1] Implement mistake handling with minimal reward and mistake bag addition in game.js
 - [x] T019 [US1] Add visual and audio feedback for correct/incorrect answers in game.js and style.css
 - [x] T020 [US1] Integrate with LocalStorage to save sentence completion status in utils.js
 - [x] T021 [US1] Create next sentence selection logic (with 30% priority for mistake bag) in game.js
 - [x] T022 [US1] Implement combo reward calculation for consecutive correct answers in utils.js
-- [x] T023 [US1] Add accessibility features for drag-and-drop (keyboard navigation) in index.html and game.js
+- [x] T023 [US1] Add accessibility features for tap-based interaction (keyboard navigation) in index.html and game.js
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
@@ -174,6 +174,12 @@ Foundational tasks for WordPet:
 - [ ] T063 Implement bundle size optimization to stay under 1MB in build process
 - [ ] T064 Add PWA manifest and service worker for offline capability in manifest.json and sw.js
 - [ ] T065 Final user testing validation with 6-12 year old children's feedback
+- [x] T066 Improve UI layout and typography for better visual appeal
+- [x] T067 Consolidate Start Practice and Continuous Mode buttons
+- [x] T068 Display core player experience data on game screen
+- [x] T069 Improve button layout with vertical stacking for better aesthetics
+- [x] T070 Add text-to-speech functionality for word pronunciation
+- [x] T071 Implement encouraging feedback messages for correct/incorrect answers
 
 ---
 

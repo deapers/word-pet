@@ -101,9 +101,11 @@ const GameManager = {
                 // Extra rewards for reviewing mistake bag sentences
                 baseCoins = 8; // 60% more coins
                 baseExp = 15;  // 50% more experience
-                this.showFeedback(`Great job reviewing this sentence! You earned ${baseCoins} coins and ${baseExp} XP.`, "success");
+                const feedbackMessage = this.getCorrectFeedbackMessage(utils.appState.player.currentCombo);
+                this.showFeedback(`${feedbackMessage} Great job reviewing this sentence! You earned ${baseCoins} coins and ${baseExp} XP.`, "success");
             } else {
-                this.showFeedback(`Correct! You earned ${baseCoins} coins and ${baseExp} XP. Combo: ${utils.appState.player.currentCombo}!`, "success");
+                const feedbackMessage = this.getCorrectFeedbackMessage(utils.appState.player.currentCombo);
+                this.showFeedback(`${feedbackMessage} You earned ${baseCoins} coins and ${baseExp} XP. Combo: ${utils.appState.player.currentCombo}!`, "success");
             }
             
             // Give rewards: coins and experience
@@ -175,7 +177,9 @@ const GameManager = {
                 );
             }
             
-            this.showFeedback(`Almost! The correct sentence was: "${gameState.currentSentence.text}". You still earned 1 coin.`, "error");
+            // Show encouraging feedback for incorrect answer
+            const feedbackMessage = this.getIncorrectFeedbackMessage();
+            this.showFeedback(`${feedbackMessage} The correct sentence was: "${gameState.currentSentence.text}". You still earned 1 coin.`, "error");
             
             // Reset combo on mistake
             utils.appState.player.currentCombo = 0;
@@ -262,6 +266,9 @@ const GameManager = {
         document.getElementById('back-home-btn').addEventListener('click', () => {
             this.returnToHome();
         });
+        
+        // Update player XP display
+        this.updatePlayerXPDisplay();
     },
     
     // Handle drag start
@@ -307,6 +314,11 @@ const GameManager = {
     handleWordClick: function(e) {
         const word = e.target.getAttribute('data-word');
         const sentenceTarget = document.getElementById('sentence-target');
+        
+        // Speak the word when clicked
+        if (typeof utils !== 'undefined' && utils.TTSUtil) {
+            utils.TTSUtil.speak(word);
+        }
         
         // Create a word element in the sentence target
         const wordSpan = document.createElement('span');
@@ -413,20 +425,27 @@ const GameManager = {
     skipCurrentSentence: function() {
         // Add to mistake bag with lower mastery
         if (gameState.currentSentence) {
-            const currentMastery = data.DataUtil.getSentenceMastery(gameState.currentSentence.text);
+            const currentMastery = (typeof data !== 'undefined' && data.DataUtil) ? 
+                data.DataUtil.getSentenceMastery(gameState.currentSentence.text) : 0.0;
             // Slightly reduce mastery when skipping
-            data.DataUtil.updateSentenceMastery(
-                gameState.currentSentence.text, 
-                Math.max(0.0, currentMastery - 0.02), 
-                null // No correctness info for skip
-            );
+            if (typeof data !== 'undefined' && data.DataUtil) {
+                data.DataUtil.updateSentenceMastery(
+                    gameState.currentSentence.text, 
+                    Math.max(0.0, currentMastery - 0.02), 
+                    null // No correctness info for skip
+                );
+            }
             
             // Add to mistake bag if mastery is low
             if (currentMastery < 0.8) {
-                data.DataUtil.addSentenceToMistakeBag(gameState.currentSentence.text);
+                if (typeof data !== 'undefined' && data.DataUtil) {
+                    data.DataUtil.addSentenceToMistakeBag(gameState.currentSentence.text);
+                }
             }
             
-            data.DataUtil.saveData();
+            if (typeof data !== 'undefined' && data.DataUtil) {
+                data.DataUtil.saveData();
+            }
             this.showFeedback("Sentence skipped.", "error");
         }
         
@@ -552,6 +571,32 @@ const GameManager = {
                 </div>
             `;
         }
+        
+        // Also update the player XP display on game screen
+        this.updatePlayerXPDisplay();
+    },
+    
+    // Update player XP display on game screen
+    updatePlayerXPDisplay: function() {
+        if (typeof utils === 'undefined') {
+            console.error("Utils module not loaded");
+            return;
+        }
+        
+        const xpDisplay = document.getElementById('player-xp-display');
+        if (xpDisplay) {
+            xpDisplay.innerHTML = `
+                <h3>Your Learning Progress</h3>
+                <div class="xp-stats">
+                    <div class="xp-stat">Level: ${utils.appState.player.level}</div>
+                    <div class="xp-stat">XP: ${utils.appState.player.totalSentencesCompleted * 10}</div>
+                    <div class="xp-stat">Coins: ${utils.appState.player.coins}</div>
+                    <div class="xp-stat">Combo: ${utils.appState.player.currentCombo}</div>
+                    <div class="xp-stat">Stamina: ${utils.appState.player.stamina}/${utils.appState.player.maxStamina}</div>
+                    <div class="xp-stat">Completed: ${utils.appState.player.totalSentencesCompleted}</div>
+                </div>
+            `;
+        }
     },
     
     // Update home screen display
@@ -662,7 +707,7 @@ const GameManager = {
         this.showFeedback("Settings screen coming soon!", "success");
     },
     
-    // Show feedback message
+    // Show feedback message with encouraging messages
     showFeedback: function(message, type) {
         // Clear any existing feedback
         if (gameState.feedbackTimeout) {
@@ -687,6 +732,56 @@ const GameManager = {
                 feedbackContainer.removeChild(feedbackEl);
             }
         }, 3000);
+        
+        // Speak the feedback message if TTS is enabled
+        if (typeof utils !== 'undefined' && utils.TTSUtil) {
+            utils.TTSUtil.speak(message);
+        }
+    },
+    
+    // Get encouraging feedback message for correct answers
+    getCorrectFeedbackMessage: function(combo) {
+        const messages = [
+            "Great job! 🎉",
+            "Awesome! 👍",
+            "Well done! ✨",
+            "Excellent! 🌟",
+            "Fantastic! 🎈",
+            "Super! 💪",
+            "Brilliant! 🌈",
+            "Wonderful! 🎊"
+        ];
+        
+        // Add combo-specific messages for higher combos
+        if (combo >= 5) {
+            messages.push("Amazing combo! 🔥");
+        }
+        if (combo >= 10) {
+            messages.push("Incredible streak! ⚡");
+        }
+        if (combo >= 15) {
+            messages.push("Legendary combo! 🏆");
+        }
+        
+        // Return a random encouraging message
+        return messages[Math.floor(Math.random() * messages.length)];
+    },
+    
+    // Get encouraging feedback message for incorrect answers
+    getIncorrectFeedbackMessage: function() {
+        const messages = [
+            "Almost! Try again! 💪",
+            "So close! You can do it! ✨",
+            "Keep trying! You're learning! 🌱",
+            "Nice effort! One more time! 👍",
+            "You're getting there! 🎯",
+            "Don't give up! Practice makes progress! 🌟",
+            "Good try! Learning takes time! ⏳",
+            "That's okay! Try again! 🔄"
+        ];
+        
+        // Return a random encouraging message
+        return messages[Math.floor(Math.random() * messages.length)];
     },
     
     // Initialize the game

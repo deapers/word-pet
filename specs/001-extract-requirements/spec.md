@@ -23,15 +23,15 @@
 
 ### User Story 1 - Sentence Practice Game (Priority: P1)
 
-As a 6-12 year old child, I want to practice forming sentences by dragging and arranging words so that I can improve my language skills while having fun.
+As a 6-12 year old child, I want to practice forming sentences by tapping words to arrange them so that I can improve my language skills while having fun.
 
 **Why this priority**: This is the core learning mechanism of WordPet - the sentence拼接 game that engages children in language learning.
 
-**Independent Test**: Child can successfully drag words to form a sentence and receive positive feedback when correct, with gentle encouragement when incorrect.
+**Independent Test**: Child can successfully tap words to form a sentence and receive positive feedback when correct, with gentle encouragement when incorrect.
 
 **Acceptance Scenarios**:
 
-1. **Given** a scrambled sentence with 3-5 words displayed on screen, **When** child drags words to correct positions, **Then** sentence is marked as correct and child receives coins and experience points
+1. **Given** a scrambled sentence with 3-5 words displayed on screen, **When** child taps words to arrange them in correct order, **Then** sentence is marked as correct and child receives coins and experience points
 2. **Given** a scrambled sentence with 3-5 words displayed on screen, **When** child arranges words incorrectly, **Then** sentence is marked as incorrect but child still receives minimal reward and sentence is added to mistake bag
 
 ---

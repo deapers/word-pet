@@ -16,11 +16,43 @@ let appState = {
     },
     settings: {
         volume: 0.8,
-        enableTTS: true,
+        enableTTS: true, // Enable text-to-speech by default
         maxDailyStamina: 10,
         enableAnimations: true,
         language: 'en',
         parentalPin: null
+    }
+};
+
+// Text-to-Speech utility
+const TTSUtil = {
+    // Speak text using Web Speech API
+    speak: function(text, language = 'en-US') {
+        // Check if TTS is enabled in settings
+        if (!appState.settings.enableTTS) {
+            return;
+        }
+        
+        // Check if speech synthesis is supported
+        if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = language;
+            utterance.volume = appState.settings.volume;
+            utterance.rate = 0.6; // Slower rate for children
+            utterance.pitch = 1.0;
+            
+            // Speak the text
+            speechSynthesis.speak(utterance);
+        } else {
+            console.warn('Speech synthesis not supported in this browser');
+        }
+    },
+    
+    // Stop all speech
+    stop: function() {
+        if ('speechSynthesis' in window) {
+            speechSynthesis.cancel();
+        }
     }
 };
 
