@@ -17,10 +17,8 @@ description: "Task list template for feature implementation"
 - Include exact file paths in descriptions
 
 ## Path Conventions
-- **Single project**: `src/`, `tests/` at repository root
-- **Web app**: `backend/src/`, `frontend/src/`
-- **Mobile**: `api/src/`, `ios/src/` or `android/src/`
-- Paths shown below assume single project - adjust based on plan.md structure
+- **WordPet**: `index.html`, `style.css`, `game.js`, `data.js`, `pet.js`, `utils.js` at repository root
+- Paths shown below assume single HTML5 page project - adjust based on plan.md structure
 
 <!-- 
   ============================================================================
@@ -38,16 +36,22 @@ description: "Task list template for feature implementation"
   - Delivered as an MVP increment
   
   DO NOT keep these sample tasks in the generated tasks.md file.
+  Remember to align all tasks with WordPet's Core Constitution:
+  - Child-First Design
+  - Low-Friction Learning  
+  - Lightweight Architecture
+  - Gamified Engagement
+  - Responsible Usage
   ============================================================================
 -->
 
 ## Phase 1: Setup (Shared Infrastructure)
 
-**Purpose**: Project initialization and basic structure
+**Purpose**: Project initialization and basic HTML structure
 
-- [ ] T001 Create project structure per implementation plan
-- [ ] T002 Initialize [language] project with [framework] dependencies
-- [ ] T003 [P] Configure linting and formatting tools
+- [ ] T001 Create basic HTML structure with proper viewport meta tag for mobile
+- [ ] T002 Initialize CSS with child-friendly colors and large touch targets
+- [ ] T003 [P] Setup JS files (game.js, data.js, pet.js, utils.js) with basic module structure
 
 ---
 
@@ -57,83 +61,83 @@ description: "Task list template for feature implementation"
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-Examples of foundational tasks (adjust based on your project):
+Foundational tasks for WordPet:
 
-- [ ] T004 Setup database schema and migrations framework
-- [ ] T005 [P] Implement authentication/authorization framework
-- [ ] T006 [P] Setup API routing and middleware structure
-- [ ] T007 Create base models/entities that all stories depend on
-- [ ] T008 Configure error handling and logging infrastructure
-- [ ] T009 Setup environment configuration management
+- [ ] T004 Setup LocalStorage persistence system for player progress
+- [ ] T005 [P] Implement basic sentence data model and storage
+- [ ] T006 [P] Create data structures for Player and Pet entities
+- [ ] T007 Implement stamina/energy management system
+- [ ] T008 Configure basic UI framework for game screens
+- [ ] T009 Setup error handling and basic logging for debugging
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
 ---
 
-## Phase 3: User Story 1 - [Title] (Priority: P1) 🎯 MVP
+## Phase 3: User Story 1 - Child Sentence Practice (Priority: P1) 🎯 MVP
 
-**Goal**: [Brief description of what this story delivers]
+**Goal**: Enable children to practice forming sentences by dragging and arranging words with positive feedback
 
-**Independent Test**: [How to verify this story works on its own]
+**Independent Test**: Child can successfully drag words to form a sentence and receive rewards when correct, with gentle encouragement when incorrect.
 
 ### Tests for User Story 1 (OPTIONAL - only if tests requested) ⚠️
 
 **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T010 [P] [US1] Contract test for [endpoint] in tests/contract/test_[name].py
-- [ ] T011 [P] [US1] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T010 [P] [US1] Test drag-and-drop functionality works with large touch targets
+- [ ] T011 [P] [US1] Test correct sentence receives positive feedback and rewards
 
 ### Implementation for User Story 1
 
-- [ ] T012 [P] [US1] Create [Entity1] model in src/models/[entity1].py
-- [ ] T013 [P] [US1] Create [Entity2] model in src/models/[entity2].py
-- [ ] T014 [US1] Implement [Service] in src/services/[service].py (depends on T012, T013)
-- [ ] T015 [US1] Implement [endpoint/feature] in src/[location]/[file].py
-- [ ] T016 [US1] Add validation and error handling
-- [ ] T017 [US1] Add logging for user story 1 operations
+- [ ] T012 [P] [US1] Implement sentence scrambling algorithm in game.js
+- [ ] T013 [P] [US1] Create drag-and-drop UI component with large touch targets for children
+- [ ] T014 [US1] Implement sentence validation logic with positive feedback (coins, experience)
+- [ ] T015 [US1] Implement mistake handling with minimal reward and mistake bag addition
+- [ ] T016 [US1] Add visual and audio feedback for correct/incorrect answers
+- [ ] T017 [US1] Integrate with LocalStorage to save sentence completion status
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
 ---
 
-## Phase 4: User Story 2 - [Title] (Priority: P2)
+## Phase 4: User Story 2 - Pet Growth and Rewards (Priority: P2)
 
-**Goal**: [Brief description of what this story delivers]
+**Goal**: Implement virtual pet that grows and unlocks features when children practice correctly
 
-**Independent Test**: [How to verify this story works on its own]
+**Independent Test**: Child receives visible pet growth (level up, new decorations) and rewards (coins, animations) when successfully completing sentence exercises.
 
 ### Tests for User Story 2 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T018 [P] [US2] Contract test for [endpoint] in tests/contract/test_[name].py
-- [ ] T019 [P] [US2] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T018 [P] [US2] Test pet level increases after accumulating sufficient experience
+- [ ] T019 [P] [US2] Test pet decorations unlock at specified milestones
 
 ### Implementation for User Story 2
 
-- [ ] T020 [P] [US2] Create [Entity] model in src/models/[entity].py
-- [ ] T021 [US2] Implement [Service] in src/services/[service].py
-- [ ] T022 [US2] Implement [endpoint/feature] in src/[location]/[file].py
-- [ ] T023 [US2] Integrate with User Story 1 components (if needed)
+- [ ] T020 [P] [US2] Implement pet data model with level, experience, and decorations in pet.js
+- [ ] T021 [US2] Create visual pet representation with growth animations
+- [ ] T022 [US2] Implement level progression system with experience tracking
+- [ ] T023 [US2] Add decoration unlocking mechanism based on achievements
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
 
 ---
 
-## Phase 5: User Story 3 - [Title] (Priority: P3)
+## Phase 5: User Story 3 - Mistake Review System (Priority: P3)
 
-**Goal**: [Brief description of what this story delivers]
+**Goal**: Enable review of previously incorrect sentences to improve mastery
 
-**Independent Test**: [How to verify this story works on its own]
+**Independent Test**: Child can revisit previously incorrect sentences and successfully complete them to improve their mastery score.
 
 ### Tests for User Story 3 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T024 [P] [US3] Contract test for [endpoint] in tests/contract/test_[name].py
-- [ ] T025 [P] [US3] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T024 [P] [US3] Test mistake bag properly stores incorrect sentences
+- [ ] T025 [P] [US3] Test sentences are removed from mistake bag after achieving mastery >=0.8
 
 ### Implementation for User Story 3
 
-- [ ] T026 [P] [US3] Create [Entity] model in src/models/[entity].py
-- [ ] T027 [US3] Implement [Service] in src/services/[service].py
-- [ ] T028 [US3] Implement [endpoint/feature] in src/[location]/[file].py
+- [ ] T026 [P] [US3] Implement mistake bag data structure with mastery tracking
+- [ ] T027 [US3] Create review interface for practicing mistake bag sentences
+- [ ] T028 [US3] Implement mastery calculation and sentence removal logic
 
 **Checkpoint**: All user stories should now be independently functional
 
@@ -147,11 +151,11 @@ Examples of foundational tasks (adjust based on your project):
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] TXXX [P] Documentation updates in docs/
-- [ ] TXXX Code cleanup and refactoring
-- [ ] TXXX Performance optimization across all stories
-- [ ] TXXX [P] Additional unit tests (if requested) in tests/unit/
-- [ ] TXXX Security hardening
+- [ ] TXXX [P] Child-friendly UI polishing and accessibility improvements
+- [ ] TXXX Code cleanup and refactoring for performance on low-end devices
+- [ ] TXXX Performance optimization for smooth animations and interactions
+- [ ] TXXX [P] Offline functionality validation and improvement
+- [ ] TXXX Child safety and privacy compliance checks
 - [ ] TXXX Run quickstart.md validation
 
 ---
@@ -246,6 +250,7 @@ With multiple developers:
 - Commit after each task or logical group
 - Stop at any checkpoint to validate story independently
 - Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
+- All tasks must align with WordPet Core Principles: Child-First Design, Low-Friction Learning, Lightweight Architecture, Gamified Engagement, and Responsible Usage
 
 
 

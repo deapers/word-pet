@@ -1,50 +1,59 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!-- 
+Sync Impact Report:
+- Version change: N/A (initial creation) → 1.0.0
+- Modified principles: N/A
+- Added sections: All sections (initial creation)
+- Removed sections: N/A
+- Templates requiring updates: ⚠ pending - .specify/templates/plan-template.md, .specify/templates/spec-template.md, .specify/templates/tasks-template.md
+- Follow-up TODOs: None
+-->
+# 小词怪 WordPet Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### Child-First Design
+User experience must prioritize the cognitive and motor skills of 6-12 year olds; UI elements must be large enough for small fingers, colors must be engaging but not overstimulating, reading level appropriate for target age group.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### Low-Friction Learning
+Mistakes must not be punitive - incorrect answers provide minimal penalty with opportunities for small rewards; focus on positive reinforcement to maintain motivation and reduce frustration.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### Lightweight Architecture
+Single HTML page implementation with embedded JS/CSS; All logic and interface controlled from single file; No external dependencies or service requirements; LocalStorage for persistence; Offline functionality supported.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### Gamified Engagement
+Game mechanics must include sentence拼接 (jigsaw puzzles), pet growth system, rewarding animations, and incentive structures (coins, experience, combo bonuses); Learning progress directly tied to pet growth.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### Responsible Usage
+Daily stamina limits to prevent overuse; offline growth mechanisms to encourage periodic engagement rather than continuous play; parental controls and progress tracking for oversight.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Additional Constraints
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### Technical Implementation
+- Frontend: HTML5, CSS3, JavaScript (ES6+)
+- Storage: LocalStorage only (no external services)
+- Graphics: CSS animations or Lottie JSON for pet animations
+- Game mechanics: Drag-and-drop or click-to-order interface for sentence assembly
+- Offline-first: Support for offline play with sync on reconnect
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+### Content Strategy
+- Sentences focused on daily life themes: greetings, weather, family, school, food, transportation
+- Difficulty progression aligned with learning mastery
+- Mistake bag system with priority for incorrect answers
+- Mastery threshold (≥0.8) for removing sentences from review queue
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+## Development Workflow
+
+### MVP Priorities
+Implementation must follow MVP sequence: single-page framework → core game logic → data persistence → reward mechanisms → pet growth → review features → parental controls; Additional features deferred until MVP complete.
+
+### Quality Gates
+- Core gameplay must function without internet connection
+- Drag-and-drop interface must work smoothly on mobile devices
+- All animations must perform well on low-end devices
+- Learning progress must persist reliably across sessions
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+Constitution supersedes all other practices and implementation decisions; all code and feature additions must align with principles; amendments require explicit documentation and approval; all PRs/reviews must verify compliance with child-first design and low-friction learning principles.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: TODO(RATIFICATION_DATE): initial creation | **Last Amended**: 2025-10-18
