@@ -67,13 +67,36 @@ const StorageUtil = {
         if (saved) {
             try {
                 const parsed = JSON.parse(saved);
-                // Merge with default state to handle missing properties
-                appState = { ...appState, ...parsed };
+                // Deep merge to preserve nested properties
+                appState = this.deepMerge(appState, parsed);
             } catch (e) {
                 console.error('Error loading state from localStorage:', e);
             }
         }
         return appState;
+    },
+
+    // Deep merge utility to properly merge nested objects
+    deepMerge: function(target, source) {
+        const output = Object.assign({}, target);
+        if (this.isObject(target) && this.isObject(source)) {
+            Object.keys(source).forEach(key => {
+                if (this.isObject(source[key])) {
+                    if (!(key in target))
+                        Object.assign(output, { [key]: source[key] });
+                    else
+                        output[key] = this.deepMerge(target[key], source[key]);
+                } else {
+                    Object.assign(output, { [key]: source[key] });
+                }
+            });
+        }
+        return output;
+    },
+
+    // Check if value is an object
+    isObject: function(item) {
+        return (item && typeof item === 'object' && !Array.isArray(item));
     },
     
     resetState: function() {
@@ -117,15 +140,20 @@ const TimeUtil = {
         const elapsed = this.calculateElapsedTime(appState.player.lastStaminaUpdate, now);
         const rechargeInterval = appState.player.staminaRechargeTime;
         
+        console.log("Stamina update check - Elapsed:", elapsed, "ms, Interval:", rechargeInterval, "ms");
+        
         // Calculate how many stamina points to restore
         const staminaPointsToRestore = Math.floor(elapsed / rechargeInterval);
         
         if (staminaPointsToRestore > 0) {
+            const oldStamina = appState.player.stamina;
             // Add stamina but not beyond max
             appState.player.stamina = Math.min(
                 appState.player.maxStamina,
                 appState.player.stamina + staminaPointsToRestore
             );
+            
+            console.log("Restoring stamina - Old:", oldStamina, "Restored:", staminaPointsToRestore, "New:", appState.player.stamina);
             
             // Update the last update time
             const remainingMs = elapsed % rechargeInterval;

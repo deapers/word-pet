@@ -12,6 +12,13 @@ let gameState = {
     isInContinuousMode: false // Track if in continuous mode
 };
 
+// Event handler references to prevent duplicate listeners
+let _startPracticeHandler = null;
+let _continuousModeHandler = null;
+let _reviewHandler = null;
+let _petCareHandler = null;
+let _settingsHandler = null;
+
 // Main game functions
 const GameManager = {
     // Start a new sentence puzzle
@@ -38,10 +45,8 @@ const GameManager = {
         
         gameState.currentSentence = sentence;
         
-        // Update stamina (decrease by 1)
+        // Update stamina (decrease by 1 for every 20 sentences completed)
         if (typeof utils !== 'undefined' && utils.StorageUtil) {
-            utils.appState.player.stamina = Math.max(0, utils.appState.player.stamina - 1);
-            utils.StorageUtil.saveState();
         } else {
             console.error("Utils module not loaded properly");
         }
@@ -502,9 +507,13 @@ const GameManager = {
         
         gameState.currentSentence = sentence;
         
-        // Update stamina (decrease by 1)
-        utils.appState.player.stamina = Math.max(0, utils.appState.player.stamina - 1);
-        utils.StorageUtil.saveState();
+        // Update stamina (decrease by 1 for every 20 sentences completed)
+        if (typeof utils !== 'undefined' && utils.StorageUtil) {
+            utils.appState.player.stamina = Math.max(0, utils.appState.player.stamina - 1);
+            utils.StorageUtil.saveState();
+        } else {
+            console.error("Utils module not loaded properly");
+        }
         
         // Update UI to show updated stamina
         this.updatePlayerStats();
@@ -541,12 +550,21 @@ const GameManager = {
     
     // Return to home screen
     returnToHome: function() {
+        console.log("Returning to home - Current player state:", utils.appState.player);
+        
+        // Update stamina based on elapsed time when returning to home
+        if (typeof utils !== 'undefined' && utils.TimeUtil) {
+            utils.TimeUtil.updateStamina(); // Update stamina based on elapsed time
+        }
+        
         // Switch back to home screen
         document.getElementById('game-screen').classList.remove('active');
         document.getElementById('home-screen').classList.add('active');
         
         // Update the home screen display
         this.updateHomeScreen();
+        
+        console.log("After returning to home - Player state:", utils.appState.player);
     },
     
     // Update player stats display
@@ -555,6 +573,8 @@ const GameManager = {
             console.error("Utils module not loaded");
             return;
         }
+        
+        console.log("Updating player stats - Current state:", utils.appState.player);
         
         const statsContainer = document.getElementById('player-stats');
         if (statsContainer) {
@@ -601,41 +621,73 @@ const GameManager = {
     
     // Update home screen display
     updateHomeScreen: function() {
+        console.log("Updating home screen - Player state:", utils.appState.player);
+        
         // Update player stats
         this.updatePlayerStats();
         
         // Update pet display
         data.PetManager.updatePetDisplay();
         
+        // Remove existing event listeners to prevent duplicates
+        const startBtn = document.getElementById('start-practice-btn');
+        const continuousBtn = document.getElementById('continuous-mode-btn');
+        const reviewBtn = document.getElementById('review-btn');
+        const petCareBtn = document.getElementById('pet-care-btn');
+        const settingsBtn = document.getElementById('settings-btn');
+        
         // Update the home screen buttons
-        document.getElementById('start-practice-btn').addEventListener('click', () => {
-            this.startSentencePuzzle();
-        });
+        if (startBtn) {
+            startBtn.removeEventListener('click', this._startPracticeHandler);
+            this._startPracticeHandler = () => {
+                this.startSentencePuzzle();
+            };
+            startBtn.addEventListener('click', this._startPracticeHandler);
+        }
         
-        document.getElementById('continuous-mode-btn').addEventListener('click', () => {
-            this.startContinuousMode();
-        });
+        if (continuousBtn) {
+            continuousBtn.removeEventListener('click', this._continuousModeHandler);
+            this._continuousModeHandler = () => {
+                this.startContinuousMode();
+            };
+            continuousBtn.addEventListener('click', this._continuousModeHandler);
+        }
         
-        document.getElementById('review-btn').addEventListener('click', () => {
-            this.startMistakeReview();
-        });
+        if (reviewBtn) {
+            reviewBtn.removeEventListener('click', this._reviewHandler);
+            this._reviewHandler = () => {
+                console.log("Review button clicked");
+                this.startMistakeReview();
+            };
+            reviewBtn.addEventListener('click', this._reviewHandler);
+        }
         
-        document.getElementById('pet-care-btn').addEventListener('click', () => {
-            this.showPetCare();
-        });
+        if (petCareBtn) {
+            petCareBtn.removeEventListener('click', this._petCareHandler);
+            this._petCareHandler = () => {
+                this.showPetCare();
+            };
+            petCareBtn.addEventListener('click', this._petCareHandler);
+        }
         
-        document.getElementById('settings-btn').addEventListener('click', () => {
-            this.showSettings();
-        });
+        if (settingsBtn) {
+            settingsBtn.removeEventListener('click', this._settingsHandler);
+            this._settingsHandler = () => {
+                this.showSettings();
+            };
+            settingsBtn.addEventListener('click', this._settingsHandler);
+        }
     },
     
     // Start mistake review
     startMistakeReview: function() {
+        console.log("startMistakeReview called");
         if (typeof data === 'undefined' || !data.DataUtil) {
             this.showFeedback("System not ready yet. Please refresh the page.", "error");
             return;
         }
         const mistakeSentences = data.DataUtil.getMistakeBagSentences();
+        console.log("Mistake sentences retrieved:", mistakeSentences, "Length:", mistakeSentences.length);
         
         if (mistakeSentences.length === 0) {
             this.showFeedback("No sentences to review! Complete more sentences to fill your mistake bag.", "error");
@@ -799,6 +851,7 @@ const GameManager = {
         
         // Load saved state
         utils.StorageUtil.loadState();
+        console.log("Initial player state loaded:", utils.appState.player);
         
         // Initialize pet system
         data.PetManager.init();
