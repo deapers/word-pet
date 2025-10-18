@@ -447,6 +447,9 @@ const GameManager = {
                     
                     // Keep game state active
                     gameState.isGameActive = true;
+                    
+                    // Provide feedback about the new sentence (but don't use the continuous mode format)
+                    this.showFeedback("New sentence loaded. Arrange the words to form a correct sentence.", "success");
                 }, 1500);
             }
         } else {
@@ -534,6 +537,11 @@ const GameManager = {
                 
                 // Display the game interface with the new sentence
                 this.displaySentencePuzzle();
+                
+                // Show progress if in continuous mode
+                if (gameState.isInContinuousMode) {
+                    this.showFeedback(`Sentence ${gameState.sentencesCompleted + 1}/50`, "success");
+                }
             }, 1500);
         }
     },
@@ -593,7 +601,7 @@ const GameManager = {
         gameState.isGameActive = true;
         
         // Show progress
-        this.showFeedback(`Sentence ${gameState.sentencesCompleted}/50`, "success");
+        this.showFeedback(`Sentence ${gameState.sentencesCompleted + 1}/50`, "success");
     },
     
     // Start continuous game mode
