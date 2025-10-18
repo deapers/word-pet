@@ -305,10 +305,31 @@ const DataUtil = {
         if (savedData) {
             try {
                 const parsed = JSON.parse(savedData);
-                sentences = parsed.sentences || sentences;
-                mistakeBag = parsed.mistakeBag || mistakeBag;
-                petData = parsed.petData || petData;
-                failedSentences = parsed.failedSentences || failedSentences; // Load failed sentences
+                
+                // Update sentences array in place
+                if (parsed.sentences) {
+                    sentences.splice(0, sentences.length);  // Clear existing array
+                    parsed.sentences.forEach(s => sentences.push(s));  // Add loaded sentences
+                }
+                
+                // Update mistakeBag properties in place
+                if (parsed.mistakeBag) {
+                    Object.assign(mistakeBag, parsed.mistakeBag);
+                }
+                
+                // Update petData properties in place and handle date conversion
+                if (parsed.petData) {
+                    Object.assign(petData, parsed.petData);
+                    // Convert lastGrowthUpdate back to Date object if it exists and is a string
+                    if (petData.lastGrowthUpdate && typeof petData.lastGrowthUpdate === 'string') {
+                        petData.lastGrowthUpdate = new Date(petData.lastGrowthUpdate);
+                    }
+                }
+                
+                // Update failedSentences properties in place
+                if (parsed.failedSentences) {
+                    Object.assign(failedSentences, parsed.failedSentences);
+                }
             } catch (e) {
                 console.error('Error loading data from localStorage:', e);
                 // If loading fails, reset to default values
@@ -387,16 +408,19 @@ const DataUtil = {
     }
 };
 
-// Initialize data when module loads
-DataUtil.initializeData();
-
 // Make data available globally for browser
+// Note: This creates initial references to the default data objects
 window.data = {
     DataUtil,
     sentences,
     mistakeBag,
     petData
 };
+
+// Initialize data when module loads (this will update the local variables with saved data in place)
+DataUtil.initializeData();
+
+// The global data object should now reflect the loaded data since we modified the original objects in place
 
 // Export for use in other modules (if using module system)
 if (typeof module !== 'undefined' && module.exports) {
