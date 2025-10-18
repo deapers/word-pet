@@ -1,78 +1,78 @@
-# 小词怪 WordPet - Project Context
+# 小词怪 WordPet - 项目上下文
 
-## Project Overview
+## 项目概述
 
-**小词怪 WordPet** (WordPet) is an educational game designed for children aged 6-12 to learn sentence construction through gamification. The project is a single-page HTML5 application (PWA) that focuses on:
+**小词怪 WordPet** (WordPet) 是一款专为6-12岁儿童设计的教育游戏，通过游戏化方式帮助孩子学习句子构造。该项目是一个单页面HTML5应用（PWA），专注于：
 
-- **Core Gameplay**: Sentence拼接 (sentence jigsaw) games where children drag and arrange words to form correct sentences
-- **Gamification**: Virtual pet growth system tied to learning progress
-- **Learning Reinforcement**: Mistake bag system for reviewing difficult sentences
-- **Child-Friendly**: Designed to minimize frustration with non-punitive feedback
+- **核心玩法**：句子拼接游戏，儿童通过点击方式拖拽并排列单词形成正确的句子
+- **游戏化设计**：与学习进度相关的虚拟宠物成长系统
+- **学习强化**：错误袋系统，用于复习困难句子
+- **儿童友好**：采用非惩罚性反馈设计，最大限度减少挫折感
 
-## Development Principles
+## 开发原则
 
-The project follows these key development principles:
+项目遵循以下关键开发原则：
 
-- **Spec-driven Development**: All changes begin with creating a specification document in the `specs/` directory before any code changes are made
+- **规格驱动开发**：所有更改都从在 `specs/` 目录中创建规格文档开始
 
-## Architecture & Technology Stack
+## 架构与技术栈
 
-The project follows a lightweight architecture using:
-- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
-- **Data Storage**: LocalStorage for persistence
-- **Game Mechanics**: Click-based drag-and-drop for sentence assembly
-- **Animations**: CSS animations for pet growth and reward animations
-- **Accessibility**: Text-to-speech (TTS) for learning support
+项目遵循轻量级架构，使用：
+- **前端**：HTML5, CSS3, JavaScript (ES6+)
+- **数据存储**：LocalStorage 持久化
+- **游戏机制**：基于点击的拖放功能进行句子组装
+- **动画效果**：CSS动画用于宠物成长和奖励动画
+- **无障碍性**：文字转语音（TTS）支持学习
 
-## Project Structure
+## 项目结构
 
 ```
-index.html - Single page framework
-style.css - Styling and animations
-game.js - Core game logic
-data.js - Sentence library and mistake data
-pet.js - Pet growth logic
-utils.js - Reward calculations, stamina management, TTS, and utilities
-wordpet.spec.md - Complete design specification
+index.html - 单页面框架
+style.css - 样式和动画
+game.js - 核心游戏逻辑
+data.js - 句子库和错误数据
+pet.js - 宠物成长逻辑
+utils.js - 奖励计算、体力管理、TTS 和实用工具
+wordpet-spec.md - 完整设计规格文档
 ```
 
-## Core Features
+## 核心功能
 
-### 1. Sentence拼接 Game
-- Randomized word sequences from daily life themes (food, animals, weather, family, school, etc.)
-- Click-to-order interface for sentence construction
-- Reward system for correct answers with combo bonuses
-- Mistake bag for incorrect answers
+### 1. 句子拼接游戏
+- 来自日常生活主题的随机单词序列（食物、动物、天气、家庭、学校等）
+- 点击排序界面进行句子构造
+- 正确答案奖励系统，包含连击奖励
+- 错误答案进入错误袋
 
-### 2. Pet Growth System
-- Experience points earned through correct answers
-- Level progression with visual rewards (emoji changes)
-- Stamina system to prevent overuse (recharges over time)
-- Offline experience/energy regeneration
+### 2. 宠物成长系统
+- 通过正确答案获得经验值
+- 等级进度，带视觉奖励（表情符号变化）
+- 体力系统防止过度使用（随时间恢复）
+- 离线经验/能量再生
 
-### 3. Learning Reinforcement
-- Mistake bag with prioritized review (30% chance of appearing)
-- Mastery tracking for each sentence
-- Bonus rewards for correcting mistakes (60% more coins, 50% more experience)
+### 3. 学习强化
+- 错误袋优先复习（30%出现概率）
+- 每个句子的掌握度追踪
+- 错误纠正奖励（60%更多金币，50%更多经验）
 
-### 4. User Experience Elements
-- Combo tracking for consecutive correct answers
-- Encouraging feedback messages for both correct and incorrect answers
-- Text-to-speech for both words and feedback messages
-- Visual animations for level-ups and rewards
+### 4. 用户体验元素
+- 连续正确答案连击追踪
+- 正确和错误答案的鼓励反馈信息
+- 单词和反馈信息的文字转语音功能
+- 升级和奖励的视觉动画
 
-## Data Model
+## 数据模型
 
-The application uses a JSON structure stored in LocalStorage:
+应用使用存储在 LocalStorage 中的 JSON 结构：
 ```json
 {
   "player": {
     "level": 1,
     "coins": 0,
-    "stamina": 0,  // Current stamina value
-    "maxStamina": 5,  // Maximum stamina value (reaches full at 5 points)
-    "staminaRechargeTime": 60000,  // 1 minute in ms (60000ms) - recovers 1 point per minute
-    "lastStaminaUpdate": "timestamp",  // Last time stamina was updated
+    "stamina": 0,  // 当前体力值
+    "maxStamina": 5,  // 最大体力值（达到5点时为满）
+    "staminaRechargeTime": 60000,  // 1分钟（60000ms）- 每分钟恢复1点
+    "lastStaminaUpdate": "timestamp",  // 最后体力更新时间
     "currentCombo": 0,
     "maxCombo": 0,
     "totalSentencesCompleted": 0,
@@ -109,57 +109,57 @@ The application uses a JSON structure stored in LocalStorage:
 }
 ```
 
-## Implementation Details
+## 实现细节
 
-### Game Flow
-1. Player starts on the home screen with pet display and stats
-2. Player selects "Start Practice" to begin sentence puzzle
-3. Game checks if player has stamina and retrieves next sentence (with 30% priority for mistake bag items)
-4. Sentence words are scrambled and presented for arrangement
-5. Player arranges words by clicking them into the sentence target
-6. Upon submitting, correctness is checked and appropriate rewards/feedback given
-7. Game updates player/pet stats and returns to home screen or continues based on mode
+### 游戏流程
+1. 玩家从带宠物显示和状态的主页开始
+2. 玩家选择"开始练习"以开始句子拼图
+3. 游戏检查玩家是否有力气并获取下一个句子（错误袋项目有30%优先级）
+4. 句子单词被打乱并呈现以便排列
+5. 玩家通过点击将单词排列到句子目标中
+6. 提交后检查正确性并给予适当的奖励/反馈
+7. 游戏更新玩家/宠物状态并根据模式返回主页或继续
 
-### Sentence Mastery System
-- Correct answer: +0.15 mastery, minimum 0.0, maximum 1.0
-- Incorrect answer: -0.05 mastery, minimum 0.0, maximum 1.0
-- Sentences with <0.8 mastery go to mistake bag
-- Sentences with ≥0.8 mastery are removed from mistake bag
-- Mastery determines when a sentence is considered "learned"
+### 句子掌握度系统
+- 正确答案：+0.15掌握度，最小0.0，最大1.0
+- 错误答案：-0.05掌握度，最小0.0，最大1.0
+- 掌握度 < 0.8 的句子进入错误袋
+- 掌握度 ≥ 0.8 的句子从错误袋移除
+- 掌握度决定句子是否被视为"已学会"
 
-### Stamina System
-- Default 5 stamina points with a maximum of 5
-- Stamina recovers at a rate of 1 point per minute (60,000ms) 
-- Each Start Practice costs 1 stamina
-- The "Review Mistakes" mode does NOT cost stamina
-- Prevents overuse and encourages spaced learning
+### 体力系统
+- 默认5点体力，最大5点
+- 体力以每分钟1点（60,000ms）的速度恢复
+- 每次Start Practice消耗1点体力
+- "复习错误"模式不消耗体力
+- 防止过度使用并鼓励间隔学习
 
-### Pet Growth System
-- Pet gains experience from correct answers and pet care activities
-- Experience thresholds increase as the pet levels up (100 + level * 50)
-- Pet emoji changes as levels increase (🐶 → 🐩 → 🐕‍🦺)
-- Offline experience gained based on time elapsed since last play
+### 宠物成长系统
+- 宠物从正确答案和宠物护理活动中获得经验
+- 升级经验阈值随宠物等级增加而增加（100 + 等级 * 50）
+- 宠物表情符号随等级增加而变化（🐶 → 🐩 → 🐕‍🦺）
+- 离线经验基于自上次游戏以来经过的时间获得
 
-## Development Approach
+## 开发方法
 
-The project follows an MVP (Minimum Viable Product) approach with fully implemented:
-1. Single-page framework with responsive design
-2. Core sentence拼接 game logic with click-based interactions
-3. LocalStorage data persistence for all game state
-4. Reward and mistake bag mechanisms
-5. Pet growth animations and stamina system
-6. Mistake review functionality
-7. Text-to-speech integration for accessibility
-8. Combo system and encouraging feedback messages
+项目遵循MVP（最小可行产品）方法，完全实现：
+1. 单页面框架，带响应式设计
+2. 基于点击交互的核心句子拼接游戏逻辑
+3. 用于所有游戏状态的LocalStorage持久化
+4. 奖励和错误袋机制
+5. 宠物成长动画和体力系统
+6. 错误复习功能
+7. 无障碍性的文字转语音集成
+8. 连击系统和鼓励反馈信息
 
-## Design Philosophy
+## 设计哲学
 
-- **Lightweight**: Single HTML file with embedded JS/CSS
-- **No frustration**: Answering incorrectly provides minimal penalty with opportunities for small rewards
-- **Self-motivated learning**: Mistake review offers bonus rewards
-- **Gamification**: Pet animations, coins/food, and combo rewards
-- **Anti-addiction**: Daily stamina limits and offline growth mechanisms
-- **Accessibility**: Text-to-speech, large touch targets, and keyboard navigation support
+- **轻量级**：嵌入JS/CSS的单HTML文件
+- **无挫败感**：错误回答提供最小惩罚，有机会获得小奖励
+- **自主学习**：错误复习提供额外奖励
+- **游戏化**：宠物动画、金币/食物和连击奖励
+- **防上瘾**：每日体力限制和离线增长机制
+- **无障碍性**：文字转语音、大触摸目标和键盘导航支持
 
-## Qwen Added Memories
-- 在进行任何编码工作之前，必须遵循SDD（Specification-Driven Development）原则，先在specs/目录中创建或更新相关的spec文档，然后由用户确认之后，然后再进行代码实现。
+## Qwen 添加的记忆
+- 在进行任何编码工作之前，必须遵循SDD（规格驱动开发）原则，先在specs/目录中创建或更新相关的spec文档，然后由用户确认之后，然后再进行代码实现。
