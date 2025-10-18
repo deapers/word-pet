@@ -9,6 +9,7 @@ let gameState = {
     lastFeedback: null,
     feedbackTimeout: null,
     sentencesCompleted: 0, // Track sentences completed in continuous mode
+    sentencesSkipped: 0,  // Track sentences skipped in current session
     isInContinuousMode: false // Track if in continuous mode
 };
 
@@ -23,6 +24,9 @@ let _settingsHandler = null;
 const GameManager = {
     // Start a new sentence puzzle
     startSentencePuzzle: function() {
+        // Reset the skip counter when starting a new game session
+        gameState.sentencesSkipped = 0;
+        
         // Check if player has stamina
         if (typeof utils !== 'undefined' && utils.TimeUtil) {
             utils.TimeUtil.updateStamina(); // Update stamina based on elapsed time
@@ -469,14 +473,44 @@ const GameManager = {
             this.showFeedback("Sentence skipped.", "error");
         }
         
-        // Move to next sentence after a delay
-        setTimeout(() => {
-            this.showNextSentence();
-        }, 1500);
+        // Increment the skip counter
+        gameState.sentencesSkipped++;
+        
+        if (gameState.sentencesSkipped >= 5) {
+            // After 5 skips, return to home screen
+            this.showFeedback("You've skipped 5 sentences. Returning to home.", "error");
+            setTimeout(() => {
+                this.showNextSentence();  // This returns to home screen
+            }, 1500);
+        } else {
+            // Otherwise, get a new sentence without consuming stamina (since we already deducted it)
+            setTimeout(() => {
+                // Get next sentence (with 30% priority for mistake bag items)
+                const sentence = data.DataUtil.getNextSentence();
+                if (!sentence) {
+                    this.showFeedback("No sentences available! Try adding more.", "error");
+                    this.showNextSentence(); // Return to home screen
+                    return;
+                }
+                
+                gameState.currentSentence = sentence;
+                
+                // Update stamina (reduce by 1 when starting the puzzle)
+                // NOTE: We don't reduce stamina here since we already did when the original puzzle started
+                // Scramble the sentence words
+                this.scrambleSentence(sentence.text);
+                
+                // Display the game interface with the new sentence
+                this.displaySentencePuzzle();
+            }, 1500);
+        }
     },
     
     // Show next sentence (return to home screen)
     showNextSentence: function() {
+        // Reset the skip counter when returning to home screen
+        gameState.sentencesSkipped = 0;
+        
         // Switch back to home screen
         document.getElementById('game-screen').classList.remove('active');
         document.getElementById('home-screen').classList.add('active');
@@ -504,10 +538,41 @@ const GameManager = {
     skipCurrentSentence: function() {
         this.showFeedback("Sentence skipped.", "error");
         
-        // After a delay, move to next sentence
-        setTimeout(() => {
-            this.showNextSentence();
-        }, 1500);
+        // Increment the skip counter
+        gameState.sentencesSkipped++;
+        
+        if (gameState.sentencesSkipped >= 5) {
+            // After 5 skips, return to home screen
+            this.showFeedback("You've skipped 5 sentences. Returning to home.", "error");
+            setTimeout(() => {
+                this.showNextSentence();  // This returns to home screen
+            }, 1500);
+        } else {
+            // Otherwise, get a new sentence without consuming additional stamina (since skipping doesn't attempt the sentence)
+            setTimeout(() => {
+                // Get next sentence (with 30% priority for mistake bag items) without consuming stamina
+                const sentence = data.DataUtil.getNextSentence();
+                if (!sentence) {
+                    this.showFeedback("No more sentences available!", "error");
+                    this.returnToHome();
+                    return;
+                }
+                
+                gameState.currentSentence = sentence;
+                
+                // Scramble the sentence words
+                this.scrambleSentence(sentence.text);
+                
+                // Display the game interface with the new sentence
+                this.displaySentencePuzzle();
+                
+                // Update game state
+                gameState.isGameActive = true;
+                
+                // Show progress in continuous mode
+                this.showFeedback(`Sentence ${gameState.sentencesCompleted}/50`, "success");
+            }, 1500);
+        }
     },
     
     // Show next sentence in continuous mode
@@ -551,6 +616,9 @@ const GameManager = {
         // Reset sentence counter
         gameState.sentencesCompleted = 0;
         
+        // Reset skip counter when starting continuous mode
+        gameState.sentencesSkipped = 0;
+        
         // Show first sentence
         this.showNextSentenceInContinuousMode();
     },
@@ -565,6 +633,9 @@ const GameManager = {
     
     // Return to home screen
     returnToHome: function() {
+        // Reset the skip counter when returning to home screen
+        gameState.sentencesSkipped = 0;
+        
         console.log("Returning to home - Current player state:", utils.appState.player);
         
         // Update stamina based on elapsed time when returning to home
