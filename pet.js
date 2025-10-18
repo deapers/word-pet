@@ -191,22 +191,82 @@ const PetManager = {
         if (petDisplay) {
             // Determine pet emoji based on level
             let petEmoji = '🐶';
-            if (data.petData.level >= 10) {
-                petEmoji = '🐕‍🦺'; // Working dog for higher levels
-            } else if (data.petData.level >= 5) {
-                petEmoji = '🐩'; // Poodle for mid levels
+            let petLevel = 1;
+            let petExp = 0;
+            let petExpToNextLevel = 100;
+            let petDecorationsLength = 0;
+            
+            if (typeof data !== 'undefined' && data.petData) {
+                petLevel = data.petData.level;
+                petExp = data.petData.exp;
+                petExpToNextLevel = data.petData.expToNextLevel;
+                petDecorationsLength = data.petData.decorations ? data.petData.decorations.length : 0;
+                
+                if (petLevel >= 10) {
+                    petEmoji = '🐕‍🦺'; // Working dog for higher levels
+                } else if (petLevel >= 5) {
+                    petEmoji = '🐩'; // Poodle for mid levels
+                }
             }
             
-            // Update the pet display content
+            // Determine player avatar and stats based on level
+            let playerAvatar = '😊';
+            let playerLevel = 1;
+            let playerCoins = 0;
+            let playerStamina = 5;
+            let playerMaxStamina = 5;
+            let playerCurrentCombo = 0;
+            let playerMaxCombo = 0;
+            let playerTotalSentencesCompleted = 0;
+            
+            if (typeof window.utils !== 'undefined' && window.utils.appState && window.utils.appState.player) {
+                playerAvatar = window.utils.appState.player.avatar;
+                playerLevel = window.utils.appState.player.level;
+                playerCoins = window.utils.appState.player.coins;
+                playerStamina = window.utils.appState.player.stamina;
+                playerMaxStamina = window.utils.appState.player.maxStamina;
+                playerCurrentCombo = window.utils.appState.player.currentCombo;
+                playerMaxCombo = window.utils.appState.player.maxCombo;
+                playerTotalSentencesCompleted = window.utils.appState.player.totalSentencesCompleted;
+            }
+            
+            // Highlight low stamina with special styling
+            const staminaClass = playerStamina <= 0 ? 'stat stat-low' : 'stat';
+            const staminaDisplay = `<div class="${staminaClass}">Stamina: ${playerStamina}/${playerMaxStamina}</div>`;
+            
+            // Update the pet display content with both pet and player info side by side
             petDisplay.innerHTML = `
-                <div class="pet-avatar">${petEmoji}</div>
-                <div class="pet-info">
-                    <h3>Pet Level: ${data.petData.level}</h3>
-                    <p>Experience: ${data.petData.exp}/${data.petData.expToNextLevel}</p>
-                    <div class="pet-stats">
-                        <div class="pet-stat"> decorations: ${data.petData.decorations.length}</div>
-                        <div class="pet-stat"> exp: ${data.petData.exp}</div>
-                        <div class="pet-stat"> next: ${data.petData.expToNextLevel}</div>
+                <div class="avatars-container">
+                    <div class="avatar-section">
+                        <div class="avatar-label">Player</div>
+                        <div class="player-avatar">${playerAvatar}</div>
+                        <div class="player-info">
+                            <h3>Level: ${playerLevel}</h3>
+                            <div class="stat-item">
+                                <div class="stat">Coins: ${playerCoins}</div>
+                                ${staminaDisplay}
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat">Combo: ${playerCurrentCombo}</div>
+                                <div class="stat">Max Combo: ${playerMaxCombo}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat">Completed: ${playerTotalSentencesCompleted}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="avatar-section">
+                        <div class="avatar-label">Pet</div>
+                        <div class="pet-avatar">${petEmoji}</div>
+                        <div class="pet-info">
+                            <h3>Pet Level: ${data.petData.level}</h3>
+                            <p>Experience: ${data.petData.exp}/${data.petData.expToNextLevel}</p>
+                            <div class="pet-stats">
+                                <div class="pet-stat"> decorations: ${data.petData.decorations.length}</div>
+                                <div class="pet-stat"> exp: ${data.petData.exp}</div>
+                                <div class="pet-stat"> next: ${data.petData.expToNextLevel}</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;

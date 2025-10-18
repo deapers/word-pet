@@ -275,7 +275,7 @@ h3 {
   padding: 20px;
   background-color: #f8f9fa;
   border-radius: var(--border-radius);
-  min-height: 200px;
+  min-height: 250px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -283,7 +283,34 @@ h3 {
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-.pet-avatar {
+/* Container for pet and player avatars side by side */
+.avatars-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  width: 100%;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-width: 150px;
+}
+
+.avatar-label {
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: var(--primary-color);
+  font-size: 1.2rem;
+}
+
+.pet-avatar, .player-avatar {
   width: 150px;
   height: 150px;
   background-color: var(--child-friendly-pink);
@@ -291,10 +318,28 @@ h3 {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 15px;
-  font-size: 3rem;
+  margin: 0 auto;
+  font-size: 4rem; /* Increased font size for bigger emojis */
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 600px) {
+  .avatars-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .avatar-section {
+    width: 100%;
+  }
+  
+  .pet-avatar, .player-avatar {
+    width: 100px;
+    height: 100px;
+    font-size: 3rem;
+  }
 }
 
 .pet-avatar.level-up {
@@ -348,19 +393,18 @@ h3 {
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* Player avatar styling to match pet avatar */
-.player-avatar {
-  width: 80px;
-  height: 80px;
-  background-color: var(--child-friendly-blue);
-  border-radius: 50%;
+/* Player avatar styling when displayed in player-stats section */
+.player-avatar-inline {
+  width: 150px;
+  height: 150px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 10px;
-  font-size: 2rem;
+  font-size: 4rem;
+  border-radius: 50%;
+  background-color: var(--child-friendly-blue);
   box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-  transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
 .stat-item {

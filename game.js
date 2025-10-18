@@ -705,25 +705,10 @@ const GameManager = {
         
         console.log("Updating player stats - Current state:", utils.appState.player);
         
-        const statsContainer = document.getElementById('player-stats');
-        if (statsContainer) {
-            // Highlight low stamina with special styling
-            const staminaClass = utils.appState.player.stamina <= 0 ? 'stat stat-low' : 'stat';
-            const staminaDisplay = `<div class="${staminaClass}">Stamina: ${utils.appState.player.stamina}/${utils.appState.player.maxStamina}</div>`;
-            
-            statsContainer.innerHTML = `
-                <div class="player-avatar">${utils.appState.player.avatar}</div>
-                <div class="stat-item">
-                    <div class="stat">Level: ${utils.appState.player.level}</div>
-                    <div class="stat">Coins: ${utils.appState.player.coins}</div>
-                    ${staminaDisplay}
-                </div>
-                <div class="stat-item">
-                    <div class="stat">Combo: ${utils.appState.player.currentCombo}</div>
-                    <div class="stat">Max Combo: ${utils.appState.player.maxCombo}</div>
-                    <div class="stat">Completed: ${utils.appState.player.totalSentencesCompleted}</div>
-                </div>
-            `;
+        // Player stats are now displayed together with pet in the pet-display container
+        // so we just need to ensure the pet display is updated to reflect any player changes
+        if (window.PetManager) {
+            window.PetManager.updatePetDisplay();
         }
         
         // Also update the player XP display on game screen
