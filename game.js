@@ -15,7 +15,6 @@ let gameState = {
 
 // Event handler references to prevent duplicate listeners
 let _startPracticeHandler = null;
-let _continuousModeHandler = null;
 let _reviewHandler = null;
 let _petCareHandler = null;
 let _settingsHandler = null;
@@ -606,6 +605,32 @@ const GameManager = {
     
     // Start continuous game mode
     startContinuousMode: function() {
+        // Check if player has stamina
+        if (typeof utils !== 'undefined' && utils.TimeUtil) {
+            utils.TimeUtil.updateStamina(); // Update stamina based on elapsed time
+            if (utils.appState.player.stamina <= 0) {
+                // Calculate when the next stamina will be available
+                const lastUpdate = new Date(utils.appState.player.lastStaminaUpdate);
+                const nextStaminaTime = new Date(lastUpdate.getTime() + utils.appState.player.staminaRechargeTime);
+                const now = new Date();
+                
+                if (now < nextStaminaTime) {
+                    // Calculate time until next stamina
+                    const timeToWait = nextStaminaTime - now; // in milliseconds
+                    const minutes = Math.ceil(timeToWait / 60000); // convert to minutes and round up
+                    this.showFeedback(`You're out of stamina! Next stamina in about ${minutes} minute(s). Come back later!`, "error");
+                } else {
+                    // If we've waited long enough, we should have at least 1 stamina
+                    this.showFeedback("You're out of stamina! Your stamina is recharging. Wait a moment or check back later.", "error");
+                }
+                return false;
+            }
+        } else {
+            console.error("Utils module not loaded properly");
+            this.showFeedback("System not ready yet. Please refresh the page.", "error");
+            return false;
+        }
+        
         // Reset sentence counter
         gameState.sentencesCompleted = 0;
         
@@ -614,6 +639,17 @@ const GameManager = {
         
         // Set continuous mode flag
         gameState.isInContinuousMode = true;
+        
+        // Update stamina (reduce by 1 when starting the continuous mode session)
+        if (typeof utils !== 'undefined' && utils.StorageUtil) {
+            utils.appState.player.stamina = Math.max(0, utils.appState.player.stamina - 1);
+            utils.StorageUtil.saveState();
+        } else {
+            console.error("Utils module not loaded properly");
+        }
+        
+        // Update UI to show updated stamina
+        this.updatePlayerStats();
         
         // Show first sentence
         this.showNextSentenceInContinuousMode();
@@ -720,7 +756,6 @@ const GameManager = {
         
         // Remove existing event listeners to prevent duplicates
         const startBtn = document.getElementById('start-practice-btn');
-        const continuousBtn = document.getElementById('continuous-mode-btn');
         const reviewBtn = document.getElementById('review-btn');
         const petCareBtn = document.getElementById('pet-care-btn');
         const settingsBtn = document.getElementById('settings-btn');
@@ -729,7 +764,7 @@ const GameManager = {
         if (startBtn) {
             startBtn.removeEventListener('click', this._startPracticeHandler);
             this._startPracticeHandler = () => {
-                this.startSentencePuzzle();
+                this.startContinuousMode();
             };
             startBtn.addEventListener('click', this._startPracticeHandler);
             
@@ -743,22 +778,7 @@ const GameManager = {
             }
         }
         
-        if (continuousBtn) {
-            continuousBtn.removeEventListener('click', this._continuousModeHandler);
-            this._continuousModeHandler = () => {
-                this.startContinuousMode();
-            };
-            continuousBtn.addEventListener('click', this._continuousModeHandler);
-            
-            // Disable continuous mode button if stamina is 0
-            if (utils.appState.player.stamina <= 0) {
-                continuousBtn.disabled = true;
-                continuousBtn.title = "Out of stamina! Come back later.";
-            } else {
-                continuousBtn.disabled = false;
-                continuousBtn.title = "";
-            }
-        }
+
         
         if (reviewBtn) {
             reviewBtn.removeEventListener('click', this._reviewHandler);

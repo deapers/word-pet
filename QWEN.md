@@ -130,7 +130,7 @@ The application uses a JSON structure stored in LocalStorage:
 ### Stamina System
 - Default 5 stamina points with a maximum of 5
 - Stamina recovers at a rate of 1 point per minute (60,000ms) 
-- Each completed sentence (correct or incorrect) in practice/continuous modes costs 1 stamina
+- Each Start Practice costs 1 stamina
 - The "Review Mistakes" mode does NOT cost stamina
 - Prevents overuse and encourages spaced learning
 
