@@ -698,14 +698,9 @@ const GameManager = {
             };
             reviewBtn.addEventListener('click', this._reviewHandler);
             
-            // Also disable review if stamina is 0 (since it starts a sentence puzzle)
-            if (utils.appState.player.stamina <= 0) {
-                reviewBtn.disabled = true;
-                reviewBtn.title = "Out of stamina! Come back later.";
-            } else {
-                reviewBtn.disabled = false;
-                reviewBtn.title = "";
-            }
+            // Review button should always be enabled, regardless of stamina
+            reviewBtn.disabled = false;
+            reviewBtn.title = "";
         }
         
         if (petCareBtn) {
