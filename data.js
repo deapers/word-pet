@@ -390,9 +390,9 @@ const DataUtil = {
         this.saveData();
     },
     
-    // Select next sentence function (with 30% priority for mistake bag)
+    // Select next sentence function (with priority for low mastery sentences)
     getNextSentence: function() {
-        // 30% chance to get a mistake bag sentence
+        // First, check if we should get a mistake bag sentence (30% chance)
         if (mistakeBag.sentences.length > 0 && Math.random() < mistakeBag.reviewPriority) {
             // Pick a random sentence from the mistake bag
             const randomIndex = Math.floor(Math.random() * mistakeBag.sentences.length);
@@ -405,23 +405,39 @@ const DataUtil = {
                 mistakeBag.sentences = mistakeBag.sentences.filter(item => item !== sentenceText);
                 this.saveData();
                 
-                // Fallback to a random sentence from the general list
-                if (sentences.length > 0) {
-                    const randomIndex = Math.floor(Math.random() * sentences.length);
-                    return sentences[randomIndex];
-                }
-                return null;
+                // Fallback to a low mastery sentence from the general list
+                return this.getNextLowMasterySentence();
             }
             
             return sentence;
         }
         
-        // 70% chance to get a random sentence from the general list
-        if (sentences.length > 0) {
-            const randomIndex = Math.floor(Math.random() * sentences.length);
-            return sentences[randomIndex];
+        // 70% chance: get a sentence based on mastery (low mastery first)
+        return this.getNextLowMasterySentence();
+    },
+    
+    // Get the next sentence with the lowest mastery
+    getNextLowMasterySentence: function() {
+        if (sentences.length === 0) {
+            return null;
         }
-        return null;
+        
+        // Filter sentences that are not in the mistake bag to avoid over-prioritizing
+        // (This prevents low-mastery sentences from appearing too frequently)
+        const availableSentences = sentences.filter(sentence => {
+            return !mistakeBag.sentences.includes(sentence.text);
+        });
+        
+        // If all sentences are in mistake bag or no filtered results, use all sentences
+        if (availableSentences.length === 0) {
+            // Sort all sentences by mastery (ascending - lowest mastery first)
+            const sortedSentences = [...sentences].sort((a, b) => a.mastery - b.mastery);
+            return sortedSentences[0];
+        } else {
+            // Sort available sentences by mastery (ascending - lowest mastery first)
+            const sortedSentences = [...availableSentences].sort((a, b) => a.mastery - b.mastery);
+            return sortedSentences[0];
+        }
     }
 };
 
