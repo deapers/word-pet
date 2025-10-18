@@ -9,6 +9,12 @@
 - **Learning Reinforcement**: Mistake bag system for reviewing difficult sentences
 - **Child-Friendly**: Designed to minimize frustration with non-punitive feedback
 
+## Development Principles
+
+The project follows these key development principles:
+
+- **Spec-driven Development**: All changes begin with creating a specification document in the `specs/` directory before any code changes are made
+
 ## Architecture & Technology Stack
 
 The project follows a lightweight architecture using:
@@ -63,7 +69,10 @@ The application uses a JSON structure stored in LocalStorage:
   "player": {
     "level": 1,
     "coins": 0,
-    "stamina": 5,
+    "stamina": 0,  // Current stamina value
+    "maxStamina": 5,  // Maximum stamina value (reaches full at 5 points)
+    "staminaRechargeTime": 60000,  // 1 minute in ms (60000ms) - recovers 1 point per minute
+    "lastStaminaUpdate": "timestamp",  // Last time stamina was updated
     "currentCombo": 0,
     "maxCombo": 0,
     "totalSentencesCompleted": 0,
@@ -119,9 +128,10 @@ The application uses a JSON structure stored in LocalStorage:
 - Mastery determines when a sentence is considered "learned"
 
 ### Stamina System
-- Default 5 stamina points with a maximum daily limit
-- Stamina decreases over time, recharging automatically
-- Each completed sentence (correct or incorrect) costs 1 stamina
+- Default 5 stamina points with a maximum of 5
+- Stamina recovers at a rate of 1 point per minute (60,000ms) 
+- Each completed sentence (correct or incorrect) in practice/continuous modes costs 1 stamina
+- The "Review Mistakes" mode does NOT cost stamina
 - Prevents overuse and encourages spaced learning
 
 ### Pet Growth System
