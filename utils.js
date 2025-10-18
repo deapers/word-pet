@@ -7,7 +7,7 @@ let appState = {
         coins: 0,
         stamina: 5,
         maxStamina: 5,
-        staminaRechargeTime: 1800000, // 30 minutes in ms
+        staminaRechargeTime: 60000, // 1 minute in ms
         lastStaminaUpdate: new Date(),
         totalSentencesCompleted: 0,
         totalMistakesMade: 0,
@@ -67,8 +67,38 @@ const StorageUtil = {
         if (saved) {
             try {
                 const parsed = JSON.parse(saved);
-                // Deep merge to preserve nested properties in place
-                this.deepMergeInPlace(appState, parsed);
+                
+                // Manually copy properties to ensure we update the original object
+                if (parsed.player) {
+                    appState.player.level = parsed.player.level !== undefined ? parsed.player.level : appState.player.level;
+                    appState.player.coins = parsed.player.coins !== undefined ? parsed.player.coins : appState.player.coins;
+                    appState.player.stamina = parsed.player.stamina !== undefined ? parsed.player.stamina : appState.player.stamina;
+                    appState.player.maxStamina = parsed.player.maxStamina !== undefined ? parsed.player.maxStamina : appState.player.maxStamina;
+                    appState.player.staminaRechargeTime = parsed.player.staminaRechargeTime !== undefined ? parsed.player.staminaRechargeTime : appState.player.staminaRechargeTime;
+                    
+                    // Handle date conversion for lastStaminaUpdate
+                    if (parsed.player.lastStaminaUpdate) {
+                        if (typeof parsed.player.lastStaminaUpdate === 'string') {
+                            appState.player.lastStaminaUpdate = new Date(parsed.player.lastStaminaUpdate);
+                        } else {
+                            appState.player.lastStaminaUpdate = parsed.player.lastStaminaUpdate; // Already a Date object
+                        }
+                    }
+                    
+                    appState.player.totalSentencesCompleted = parsed.player.totalSentencesCompleted !== undefined ? parsed.player.totalSentencesCompleted : appState.player.totalSentencesCompleted;
+                    appState.player.totalMistakesMade = parsed.player.totalMistakesMade !== undefined ? parsed.player.totalMistakesMade : appState.player.totalMistakesMade;
+                    appState.player.currentCombo = parsed.player.currentCombo !== undefined ? parsed.player.currentCombo : appState.player.currentCombo;
+                    appState.player.maxCombo = parsed.player.maxCombo !== undefined ? parsed.player.maxCombo : appState.player.maxCombo;
+                }
+                
+                if (parsed.settings) {
+                    appState.settings.volume = parsed.settings.volume !== undefined ? parsed.settings.volume : appState.settings.volume;
+                    appState.settings.enableTTS = parsed.settings.enableTTS !== undefined ? parsed.settings.enableTTS : appState.settings.enableTTS;
+                    appState.settings.maxDailyStamina = parsed.settings.maxDailyStamina !== undefined ? parsed.settings.maxDailyStamina : appState.settings.maxDailyStamina;
+                    appState.settings.enableAnimations = parsed.settings.enableAnimations !== undefined ? parsed.settings.enableAnimations : appState.settings.enableAnimations;
+                    appState.settings.language = parsed.settings.language !== undefined ? parsed.settings.language : appState.settings.language;
+                    appState.settings.parentalPin = parsed.settings.parentalPin !== undefined ? parsed.settings.parentalPin : appState.settings.parentalPin;
+                }
                 
                 // Update the global reference to ensure it reflects the loaded state
                 if (window.utils) {
@@ -79,21 +109,6 @@ const StorageUtil = {
             }
         }
         return appState;
-    },
-
-    // Deep merge utility to merge source into target (modifying target in place)
-    deepMergeInPlace: function(target, source) {
-        if (this.isObject(target) && this.isObject(source)) {
-            Object.keys(source).forEach(key => {
-                if (this.isObject(source[key])) {
-                    if (!target[key]) Object.assign(target, { [key]: {} });
-                    this.deepMergeInPlace(target[key], source[key]);
-                } else {
-                    target[key] = source[key];
-                }
-            });
-        }
-        return target;
     },
 
     // Check if value is an object

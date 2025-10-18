@@ -306,29 +306,46 @@ const DataUtil = {
             try {
                 const parsed = JSON.parse(savedData);
                 
-                // Update sentences array in place
+                // Update sentences array in place 
                 if (parsed.sentences) {
-                    sentences.splice(0, sentences.length);  // Clear existing array
+                    sentences.length = 0;  // Clear existing array
                     parsed.sentences.forEach(s => sentences.push(s));  // Add loaded sentences
                 }
                 
                 // Update mistakeBag properties in place
                 if (parsed.mistakeBag) {
-                    Object.assign(mistakeBag, parsed.mistakeBag);
+                    // Manually copy properties to ensure we update the original object
+                    mistakeBag.sentences = parsed.mistakeBag.sentences || mistakeBag.sentences;
+                    mistakeBag.lastReviewDate = parsed.mistakeBag.lastReviewDate || mistakeBag.lastReviewDate;
+                    mistakeBag.reviewPriority = parsed.mistakeBag.reviewPriority || mistakeBag.reviewPriority;
                 }
                 
                 // Update petData properties in place and handle date conversion
                 if (parsed.petData) {
-                    Object.assign(petData, parsed.petData);
+                    // Manually copy properties to ensure we update the original object
+                    petData.level = parsed.petData.level || petData.level;
+                    petData.exp = parsed.petData.exp || petData.exp;
+                    petData.expToNextLevel = parsed.petData.expToNextLevel || petData.expToNextLevel;
+                    petData.decorations = parsed.petData.decorations || petData.decorations;
+                    petData.offlineExpGain = parsed.petData.offlineExpGain || petData.offlineExpGain;
+                    petData.type = parsed.petData.type || petData.type;
+                    
                     // Convert lastGrowthUpdate back to Date object if it exists and is a string
-                    if (petData.lastGrowthUpdate && typeof petData.lastGrowthUpdate === 'string') {
-                        petData.lastGrowthUpdate = new Date(petData.lastGrowthUpdate);
+                    if (parsed.petData.lastGrowthUpdate) {
+                        if (typeof parsed.petData.lastGrowthUpdate === 'string') {
+                            petData.lastGrowthUpdate = new Date(parsed.petData.lastGrowthUpdate);
+                        } else {
+                            petData.lastGrowthUpdate = parsed.petData.lastGrowthUpdate; // Already a Date object
+                        }
                     }
                 }
                 
                 // Update failedSentences properties in place
                 if (parsed.failedSentences) {
-                    Object.assign(failedSentences, parsed.failedSentences);
+                    // Manually copy properties to ensure we update the original object
+                    failedSentences.sentences = parsed.failedSentences.sentences || failedSentences.sentences;
+                    failedSentences.failureCounts = parsed.failedSentences.failureCounts || failedSentences.failureCounts;
+                    failedSentences.lastFailedDate = parsed.failedSentences.lastFailedDate || failedSentences.lastFailedDate;
                 }
             } catch (e) {
                 console.error('Error loading data from localStorage:', e);
@@ -420,7 +437,10 @@ window.data = {
 // Initialize data when module loads (this will update the local variables with saved data in place)
 DataUtil.initializeData();
 
-// The global data object should now reflect the loaded data since we modified the original objects in place
+// Update the global data object to ensure it reflects loaded data
+window.data.sentences = sentences;
+window.data.mistakeBag = mistakeBag;
+window.data.petData = petData;
 
 // Export for use in other modules (if using module system)
 if (typeof module !== 'undefined' && module.exports) {

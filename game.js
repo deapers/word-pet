@@ -27,7 +27,20 @@ const GameManager = {
         if (typeof utils !== 'undefined' && utils.TimeUtil) {
             utils.TimeUtil.updateStamina(); // Update stamina based on elapsed time
             if (utils.appState.player.stamina <= 0) {
-                this.showFeedback("You're out of stamina! Wait for it to recharge or check back later.", "error");
+                // Calculate when the next stamina will be available
+                const lastUpdate = new Date(utils.appState.player.lastStaminaUpdate);
+                const nextStaminaTime = new Date(lastUpdate.getTime() + utils.appState.player.staminaRechargeTime);
+                const now = new Date();
+                
+                if (now < nextStaminaTime) {
+                    // Calculate time until next stamina
+                    const timeToWait = nextStaminaTime - now; // in milliseconds
+                    const minutes = Math.ceil(timeToWait / 60000); // convert to minutes and round up
+                    this.showFeedback(`You're out of stamina! Next stamina in about ${minutes} minute(s). Come back later!`, "error");
+                } else {
+                    // If we've waited long enough, we should have at least 1 stamina
+                    this.showFeedback("You're out of stamina! Your stamina is recharging. Wait a moment or check back later.", "error");
+                }
                 return false;
             }
         } else {
