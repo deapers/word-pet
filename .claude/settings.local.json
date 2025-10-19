@@ -3,7 +3,8 @@
     "allow": [
       "Bash(python3:*)",
       "Bash(git checkout:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(python:*)"
     ],
     "deny": [],
     "ask": []
