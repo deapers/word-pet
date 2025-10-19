@@ -130,10 +130,11 @@ const GameManager = {
                     this.showFeedbackWithTranslation(
                         `${feedbackMessage} Great job reviewing this sentence! You earned ${baseCoins} coins and ${baseExp} XP.`,
                         gameState.currentSentence.translation,
-                        "success"
+                        "success",
+                        feedbackMessage  // 只播放鼓励语
                     );
                 } else {
-                    this.showFeedback(`${feedbackMessage} Great job reviewing this sentence! You earned ${baseCoins} coins and ${baseExp} XP.`, "success");
+                    this.showFeedback(`${feedbackMessage} Great job reviewing this sentence! You earned ${baseCoins} coins and ${baseExp} XP.`, "success", feedbackMessage);
                 }
             } else {
                 const feedbackMessage = this.getCorrectFeedbackMessage(utils.appState.player.currentCombo);
@@ -142,10 +143,11 @@ const GameManager = {
                     this.showFeedbackWithTranslation(
                         `${feedbackMessage} You earned ${baseCoins} coins and ${baseExp} XP. Combo: ${utils.appState.player.currentCombo}!`,
                         gameState.currentSentence.translation,
-                        "success"
+                        "success",
+                        feedbackMessage  // 只播放鼓励语
                     );
                 } else {
-                    this.showFeedback(`${feedbackMessage} You earned ${baseCoins} coins and ${baseExp} XP. Combo: ${utils.appState.player.currentCombo}!`, "success");
+                    this.showFeedback(`${feedbackMessage} You earned ${baseCoins} coins and ${baseExp} XP. Combo: ${utils.appState.player.currentCombo}!`, "success", feedbackMessage);
                 }
             }
             
@@ -220,7 +222,7 @@ const GameManager = {
             
             // Show encouraging feedback for incorrect answer
             const feedbackMessage = this.getIncorrectFeedbackMessage();
-            this.showFeedback(`${feedbackMessage} The correct sentence was: "${gameState.currentSentence.text}". You still earned 1 coin.`, "error");
+            this.showFeedback(`${feedbackMessage} You still earned 1 coin. Try again!`, "error");
             
             // Reset combo on mistake
             utils.appState.player.currentCombo = 0;
@@ -279,8 +281,17 @@ const GameManager = {
         const container = document.getElementById('sentence-puzzle-container');
         
         // Create the puzzle interface
+        let sentenceInfo = '';
+        if (gameState.isInContinuousMode) {
+            // In continuous mode, show progress (e.g., "Sentence 12/50")
+            sentenceInfo = ` Sentence ${gameState.sentencesCompleted + 1}/50`;
+        } else {
+            // In normal mode, we could show other info if needed
+            // For now, we'll just keep it simple
+        }
+        
         container.innerHTML = `
-            <h3>Tap words to form a correct sentence:</h3>
+            <h3>Tap words to form a correct sentence:${sentenceInfo}</h3>
             <div id="sentence-target" class="sentence-display">
                 <!-- Words will be placed here by clicking -->
             </div>
@@ -490,7 +501,7 @@ const GameManager = {
                     gameState.isGameActive = true;
                     
                     // Provide feedback about the new sentence (but don't use the continuous mode format)
-                    this.showFeedback("New sentence loaded. Arrange the words to form a correct sentence.", "success");
+                    this.showFeedback("New sentence loaded. Good luck!", "success");
                 }, 1500);
             }
         } else {
@@ -579,9 +590,9 @@ const GameManager = {
                 // Display the game interface with the new sentence
                 this.displaySentencePuzzle();
                 
-                // Show progress if in continuous mode
+                // Show progress if in continuous mode (silent - no TTS)
                 if (gameState.isInContinuousMode) {
-                    this.showFeedback(`Sentence ${gameState.sentencesCompleted + 1}/50`, "success");
+                    this.showFeedback(`Sentence ${gameState.sentencesCompleted + 1}/50`, "success", "");
                 }
             }, 1500);
         }
@@ -641,8 +652,8 @@ const GameManager = {
         // Update game state
         gameState.isGameActive = true;
         
-        // Show progress
-        this.showFeedback(`Sentence ${gameState.sentencesCompleted + 1}/50`, "success");
+        // Show progress (silent - no TTS)
+        this.showFeedback(`Sentence ${gameState.sentencesCompleted + 1}/50`, "success", "");
     },
     
     // Start continuous game mode
@@ -741,8 +752,8 @@ const GameManager = {
         
         // Player stats are now displayed together with pet in the pet-display container
         // so we just need to ensure the pet display is updated to reflect any player changes
-        if (window.PetManager) {
-            window.PetManager.updatePetDisplay();
+        if (typeof data !== 'undefined' && data.PetManager) {
+            data.PetManager.updatePetDisplay();
         }
         
         // Also update the player XP display on game screen
@@ -780,7 +791,9 @@ const GameManager = {
         this.updatePlayerStats();
         
         // Update pet display
-        data.PetManager.updatePetDisplay();
+        if (typeof data !== 'undefined' && data.PetManager) {
+            data.PetManager.updatePetDisplay();
+        }
         
         // Remove existing event listeners to prevent duplicates
         const startBtn = document.getElementById('start-practice-btn');
@@ -1039,7 +1052,7 @@ const GameManager = {
     },
     
     // Show feedback message with encouraging messages
-    showFeedback: function(message, type) {
+    showFeedback: function(message, type, ttsMessage = null) {
         // Clear any existing feedback
         if (gameState.feedbackTimeout) {
             clearTimeout(gameState.feedbackTimeout);
@@ -1063,15 +1076,16 @@ const GameManager = {
                 feedbackContainer.removeChild(feedbackEl);
             }
         }, 3000);
-        
+
         // Speak the feedback message if TTS is enabled
         if (typeof utils !== 'undefined' && utils.TTSUtil) {
-            utils.TTSUtil.speak(message);
+            const messageToSpeak = ttsMessage !== null ? ttsMessage : message;
+            utils.TTSUtil.speak(messageToSpeak);
         }
     },
     
     // Show feedback message with translation for correct answers
-    showFeedbackWithTranslation: function(message, translation, type) {
+    showFeedbackWithTranslation: function(message, translation, type, ttsMessage = null) {
         // Clear any existing feedback
         if (gameState.feedbackTimeout) {
             clearTimeout(gameState.feedbackTimeout);
@@ -1113,7 +1127,8 @@ const GameManager = {
         
         // Speak the feedback message if TTS is enabled
         if (typeof utils !== 'undefined' && utils.TTSUtil) {
-            utils.TTSUtil.speak(message);
+            const messageToSpeak = ttsMessage !== null ? ttsMessage : message;
+            utils.TTSUtil.speak(messageToSpeak);
         }
     },
     
@@ -1198,7 +1213,9 @@ const GameManager = {
         this.updatePlayerStats();
         
         // Update pet display
-        data.PetManager.updatePetDisplay();
+        if (typeof data !== 'undefined' && data.PetManager) {
+            data.PetManager.updatePetDisplay();
+        }
         
         // Set up keyboard navigation for accessibility
         this.setupKeyboardNavigation();
