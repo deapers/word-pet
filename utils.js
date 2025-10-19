@@ -23,38 +23,299 @@ let appState = {
         enableAnimations: true,
         language: 'en',
         parentalPin: null
+    },
+    ttsConfig: {
+        enabled: true,
+        volume: 0.8, // Default volume level (0.0 to 1.0)
+        rate: 0.6,   // Speech rate (0.1 to 2.0, default 0.6 for children)
+        pitch: 1.0   // Voice pitch (0.0 to 2.0, default 1.0)
+    },
+    userInteractionState: {
+        currentAudioPlaying: false,
+        audioQueue: [],
+        lastWordClick: null,
+        translationVisible: false
+    }
+};
+
+// Sound effects management
+const SoundEffectManager = {
+    // Define sound effects
+    soundEffects: {
+        success: {
+            id: 'success-chime',
+            name: 'Success Chime',
+            // Using Web Audio API to generate simple success sound
+            generateAudio: function() {
+                if (typeof window.AudioContext !== 'undefined' || typeof window.webkitAudioContext !== 'undefined') {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(1200, audioContext.currentTime + 0.1);
+                    
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.3);
+                } else {
+                    // Fallback: try using TTS to say "Success"
+                    if (typeof window.utils !== 'undefined' && window.utils.TTSUtil) {
+                        window.utils.TTSUtil.speak('Success');
+                    }
+                }
+            }
+        }
+    },
+    
+    // Play a specific sound effect
+    play: function(effectId) {
+        const effect = this.soundEffects[effectId];
+        if (effect) {
+            effect.generateAudio();
+        } else {
+            console.warn(`Sound effect with ID '${effectId}' not found`);
+        }
     }
 };
 
 // Text-to-Speech utility
 const TTSUtil = {
-    // Speak text using Web Speech API
+    // Preload voices to ensure they're available
+    init: function() {
+        console.log('TTSUtil.init() called');
+        // Load voices early to make them available
+        if ('speechSynthesis' in window) {
+            // Get voices to trigger loading
+            const voices = speechSynthesis.getVoices();
+            console.log(`TTSUtil.init() - Initial voices count: ${voices.length}`);
+            
+            // Add listener to capture when voices are loaded
+            speechSynthesis.onvoiceschanged = function() {
+                console.log('TTSUtil - voices changed event triggered');
+                // Update voices when they're available
+                const voices = speechSynthesis.getVoices();
+                console.log(`TTSUtil - Voices after change: ${voices.length}`);
+                speechSynthesis.onvoiceschanged = null;
+            };
+        } else {
+            console.warn('TTSUtil.init() - speechSynthesis not supported in this browser');
+        }
+    },
+    
+    // Speak text using Web Speech API with concurrency management
     speak: function(text, language = 'en-US') {
+        console.log(`TTSUtil.speak() called with text: "${text}", language: ${language}`);
+        
         // Check if TTS is enabled in settings
         if (!appState.settings.enableTTS) {
+            console.log('TTSUtil.speak() - TTS is disabled in settings');
             return;
         }
         
-        // Check if speech synthesis is supported
         if ('speechSynthesis' in window) {
+            // Create utterance with TTS config parameters
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = language;
-            utterance.volume = appState.settings.volume;
-            utterance.rate = 0.6; // Slower rate for children
-            utterance.pitch = 1.0;
+            utterance.volume = appState.ttsConfig.volume;
+            utterance.rate = appState.ttsConfig.rate;
+            utterance.pitch = appState.ttsConfig.pitch;
             
-            // Speak the text
-            speechSynthesis.speak(utterance);
+            // Add event listeners to update interaction state
+            utterance.onstart = () => {
+                console.log(`TTSUtterance started: "${text}"`);
+                appState.userInteractionState.currentAudioPlaying = true;
+            };
+            
+            utterance.onend = () => {
+                console.log(`TTSUtterance ended: "${text}"`);
+                appState.userInteractionState.currentAudioPlaying = false;
+                
+                // Process next item in queue if exists
+                if (appState.userInteractionState.audioQueue.length > 0) {
+                    const nextItem = appState.userInteractionState.audioQueue.shift();
+                    setTimeout(() => {
+                        this.speak(nextItem.text, nextItem.language);
+                    }, 100); // Small delay to ensure clean transition
+                }
+            };
+            
+            utterance.onerror = (event) => {
+                console.error(`TTSUtterance error:`, event);
+                appState.userInteractionState.currentAudioPlaying = false;
+            };
+            
+            // Handle concurrency: either cancel and play immediately or queue
+            if (appState.userInteractionState.currentAudioPlaying) {
+                // Current audio is playing, so queue this request
+                appState.userInteractionState.audioQueue.push({ text, language });
+                console.log(`TTSUtil.speak() - Queued request for: "${text}", queue length: ${appState.userInteractionState.audioQueue.length}`);
+            } else {
+                // No audio currently playing, so play immediately
+                speechSynthesis.cancel(); // Cancel any remaining speech
+                speechSynthesis.speak(utterance);
+                console.log(`TTSUtil.speak() - Speaking: "${text}"`);
+            }
         } else {
             console.warn('Speech synthesis not supported in this browser');
         }
     },
     
-    // Stop all speech
+    // Speak word with specific parameters for child learning with concurrency management
+    speakWord: function(word) {
+        console.log(`TTSUtil.speakWord() called for word: "${word}"`);
+        
+        // Check if TTS is enabled
+        if (!appState.ttsConfig.enabled) {
+            console.log('TTSUtil.speakWord() - TTS is disabled in config');
+            return;
+        }
+        
+        // Check if browser supports speech synthesis
+        if (!('speechSynthesis' in window)) {
+            console.warn('TTSUtil.speakWord() - Speech synthesis not supported in this browser');
+            return;
+        }
+        
+        // Log browser information for debugging
+        console.log('TTSUtil.speakWord() - Browser supports speechSynthesis');
+        
+        // Get available voices for debugging
+        const voices = speechSynthesis.getVoices();
+        console.log(`TTSUtil.speakWord() - Available voices: ${voices.length}`);
+        
+        if (voices.length === 0) {
+            // Voices might not be loaded yet, listen for them
+            console.log('TTSUtil.speakWord() - No voices available yet, waiting for voiceschanged event');
+            
+            const handleVoicesChanged = () => {
+                const loadedVoices = speechSynthesis.getVoices();
+                console.log(`TTSUtil.speakWord() - Voices loaded: ${loadedVoices.length}`);
+                
+                if (loadedVoices.length > 0) {
+                    // Try speaking again now that voices are loaded
+                    console.log('TTSUtil.speakWord() - Retrying speak with loaded voices');
+                    speechSynthesis.onvoiceschanged = null;
+                    this.speakWord(word); // Recursive call with loaded voices
+                } else {
+                    console.warn('TTSUtil.speakWord() - Still no voices available after voiceschanged event');
+                    speechSynthesis.onvoiceschanged = null;
+                }
+            };
+            
+            speechSynthesis.onvoiceschanged = handleVoicesChanged;
+            
+            // Trigger voice loading by calling getVoices again
+            speechSynthesis.getVoices();
+            return;
+        }
+        
+        // Log voice details
+        const englishVoices = voices.filter(voice => voice.lang.startsWith('en'));
+        console.log(`TTSUtil.speakWord() - English voices available: ${englishVoices.length}`);
+        if (englishVoices.length > 0) {
+            console.log(`TTSUtil.speakWord() - First English voice: ${englishVoices[0].name} (${englishVoices[0].lang})`);
+        }
+        
+        // Create utterance for word pronunciation
+        const utterance = new SpeechSynthesisUtterance(word);
+        utterance.lang = 'en-US';
+        utterance.volume = appState.ttsConfig.volume;
+        utterance.rate = appState.ttsConfig.rate; // Using config rate for consistency
+        utterance.pitch = appState.ttsConfig.pitch;
+        
+        // Log utterance settings
+        console.log(`TTSUtil.speakWord() - Utterance settings:`, {
+            text: word,
+            lang: utterance.lang,
+            volume: utterance.volume,
+            rate: utterance.rate,
+            pitch: utterance.pitch
+        });
+        
+        // Add event listeners to update interaction state
+        utterance.onstart = () => {
+            console.log(`TTSUtterance word started: "${word}"`);
+            appState.userInteractionState.currentAudioPlaying = true;
+        };
+        
+        utterance.onend = () => {
+            console.log(`TTSUtterance word ended: "${word}"`);
+            appState.userInteractionState.currentAudioPlaying = false;
+            
+            // Process next item in queue if exists
+            if (appState.userInteractionState.audioQueue.length > 0) {
+                const nextItem = appState.userInteractionState.audioQueue.shift();
+                console.log(`TTSUtil.speakWord() - Processing next item in queue: "${nextItem.text}"`);
+                setTimeout(() => {
+                    this.speak(nextItem.text, nextItem.language);
+                }, 100); // Small delay to ensure clean transition
+            }
+        };
+        
+        utterance.onerror = (event) => {
+            console.error(`TTSUtterance word error:`, event);
+            console.error(`TTSUtterance word error details:`, {
+                error: event.error,
+                charIndex: event.charIndex,
+                elapsedTime: event.elapsedTime,
+                name: event.name
+            });
+            appState.userInteractionState.currentAudioPlaying = false;
+        };
+        
+        utterance.onpause = () => {
+            console.log(`TTSUtterance word paused: "${word}"`);
+        };
+        
+        utterance.onresume = () => {
+            console.log(`TTSUtterance word resumed: "${word}"`);
+        };
+        
+        // Handle concurrency: either cancel and play immediately or queue
+        if (appState.userInteractionState.currentAudioPlaying) {
+            // Current audio is playing, so queue this request
+            appState.userInteractionState.audioQueue.push({ text: word, language: 'en-US' });
+            console.log(`TTSUtil.speakWord() - Queued word: "${word}", queue length: ${appState.userInteractionState.audioQueue.length}`);
+        } else {
+            // No audio currently playing, so play immediately
+            console.log('TTSUtil.speakWord() - Cancelling any existing speech and speaking new utterance');
+            speechSynthesis.cancel(); // Cancel any remaining speech
+            
+            // Add a small delay to ensure clean transition
+            setTimeout(() => {
+                try {
+                    speechSynthesis.speak(utterance);
+                    console.log(`TTSUtil.speakWord() - Speaking word: "${word}"`);
+                } catch (error) {
+                    console.error(`TTSUtil.speakWord() - Error speaking word "${word}":`, error);
+                }
+            }, 50);
+        }
+    },
+    
+    // Stop all speech and clear queue
     stop: function() {
+        console.log('TTSUtil.stop() called');
         if ('speechSynthesis' in window) {
             speechSynthesis.cancel();
+            appState.userInteractionState.currentAudioPlaying = false;
+            appState.userInteractionState.audioQueue = []; // Clear the queue
+            console.log('TTSUtil.stop() - Speech cancelled and queue cleared');
         }
+    },
+    
+    // Clear the audio queue without stopping current speech
+    clearQueue: function() {
+        console.log('TTSUtil.clearQueue() called');
+        appState.userInteractionState.audioQueue = [];
+        console.log('TTSUtil.clearQueue() - Queue cleared, items removed');
     }
 };
 
@@ -255,15 +516,24 @@ const AvatarManager = {
     
     // Update player avatar based on current level
     updatePlayerAvatar: function() {
+        console.log('AvatarManager.updatePlayerAvatar() called - using ULTRA SAFE version');
         const currentLevel = utils.appState.player.level;
         utils.appState.player.avatar = this.getAvatarForLevel(currentLevel);
         
         // Save updated state
         utils.StorageUtil.saveState();
         
-        // Update UI to reflect avatar change
-        if (window.GameManager) {
-            window.GameManager.updatePlayerStatsUI();
+        // Update UI to reflect avatar change - directly update pet display
+        console.log('AvatarManager.updatePlayerAvatar() - directly updating pet display');
+        if (window.PetManager && typeof window.PetManager.updatePetDisplay === 'function') {
+            try {
+                window.PetManager.updatePetDisplay();
+                console.log('AvatarManager.updatePlayerAvatar() - pet display updated successfully');
+            } catch (error) {
+                console.warn('Failed to update pet display:', error);
+            }
+        } else {
+            console.log('AvatarManager.updatePlayerAvatar() - PetManager not available');
         }
         
         // Return the new avatar for potential use
@@ -278,11 +548,17 @@ window.utils = {
     ValidationUtil,
     RandomUtil,
     AvatarManager,
+    TTSUtil,  // Add TTSUtil to the global utils object
     appState
 };
 
 // Ensure state is loaded when module is ready
 StorageUtil.loadState();
+
+// Initialize TTSUtil after window.utils is set
+if (window.utils && window.utils.TTSUtil) {
+    window.utils.TTSUtil.init();
+}
 
 // Update the global appState reference after loading (to ensure it reflects saved data)
 window.utils.appState = appState;
@@ -299,6 +575,15 @@ if (typeof module !== 'undefined' && module.exports) {
         TimeUtil,
         ValidationUtil,
         RandomUtil,
+        TTSUtil,
         appState
     };
 }
+
+// Initialize TTSUtil when document is loaded to ensure browser compatibility
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize TTSUtil after page is fully loaded
+    if (window.utils && window.utils.TTSUtil) {
+        window.utils.TTSUtil.init();
+    }
+});

@@ -1069,6 +1069,7 @@ function loadSentencesFromJSON() {
         // Add default state properties to each sentence
         sentences = jsonData.map(sentence => ({
             text: sentence.text,
+            translation: sentence.translation || "",  // Translation in child-friendly language
             mastery: 0.0,           // Default mastery
             lastReviewed: null,     // Last review time
             incorrectCount: 0,      // Number of incorrect attempts

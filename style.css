@@ -218,6 +218,18 @@ h3 {
   background-color: #6a94e0; /* Visual feedback when clicked */
 }
 
+.word-pronunciation-active {
+  animation: pronunciationActive 0.5s ease-in-out;
+  background-color: var(--child-friendly-yellow);
+  color: #333;
+}
+
+@keyframes pronunciationActive {
+  0% { transform: scale(1); box-shadow: 0 0 0 3px rgba(253, 214, 99, 0.5); }
+  50% { transform: scale(1.1); box-shadow: 0 0 10px 5px rgba(253, 214, 99, 0.8); }
+  100% { transform: scale(1); box-shadow: 0 0 0 3px rgba(253, 214, 99, 0.5); }
+}
+
 .word-tile.correct {
   background-color: var(--success-color);
   color: white;
@@ -451,12 +463,34 @@ h3 {
   margin: 10px 0;
   font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  position: relative;
+}
+
+.feedback-message-text {
+  margin-bottom: 10px;
+}
+
+.feedback-translation {
+  font-size: var(--font-size-normal);
+  font-weight: normal;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-color);
+  font-style: italic;
 }
 
 .feedback-success {
   background-color: #e6f4ea;
   color: var(--success-color);
   border: 1px solid #80cc74;
+  animation: feedbackSuccessPulse 0.5s ease-in-out;
+}
+
+@keyframes feedbackSuccessPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
 }
 
 .feedback-error {

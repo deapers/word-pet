@@ -125,10 +125,28 @@ const GameManager = {
                 baseCoins = 8; // 60% more coins
                 baseExp = 15;  // 50% more experience
                 const feedbackMessage = this.getCorrectFeedbackMessage(utils.appState.player.currentCombo);
-                this.showFeedback(`${feedbackMessage} Great job reviewing this sentence! You earned ${baseCoins} coins and ${baseExp} XP.`, "success");
+                // Show feedback with translation if available
+                if (gameState.currentSentence.translation) {
+                    this.showFeedbackWithTranslation(
+                        `${feedbackMessage} Great job reviewing this sentence! You earned ${baseCoins} coins and ${baseExp} XP.`,
+                        gameState.currentSentence.translation,
+                        "success"
+                    );
+                } else {
+                    this.showFeedback(`${feedbackMessage} Great job reviewing this sentence! You earned ${baseCoins} coins and ${baseExp} XP.`, "success");
+                }
             } else {
                 const feedbackMessage = this.getCorrectFeedbackMessage(utils.appState.player.currentCombo);
-                this.showFeedback(`${feedbackMessage} You earned ${baseCoins} coins and ${baseExp} XP. Combo: ${utils.appState.player.currentCombo}!`, "success");
+                // Show feedback with translation if available
+                if (gameState.currentSentence.translation) {
+                    this.showFeedbackWithTranslation(
+                        `${feedbackMessage} You earned ${baseCoins} coins and ${baseExp} XP. Combo: ${utils.appState.player.currentCombo}!`,
+                        gameState.currentSentence.translation,
+                        "success"
+                    );
+                } else {
+                    this.showFeedback(`${feedbackMessage} You earned ${baseCoins} coins and ${baseExp} XP. Combo: ${utils.appState.player.currentCombo}!`, "success");
+                }
             }
             
             // Give rewards: coins and experience
@@ -206,6 +224,11 @@ const GameManager = {
             
             // Reset combo on mistake
             utils.appState.player.currentCombo = 0;
+        }
+        
+        // Play sound effect for correct answer
+        if (isCorrect && typeof window.utils !== 'undefined' && window.utils.SoundEffectManager) {
+            window.utils.SoundEffectManager.play('success');
         }
         
         // Save updated state
@@ -346,9 +369,20 @@ const GameManager = {
         const word = e.target.getAttribute('data-word');
         const sentenceTarget = document.getElementById('sentence-target');
         
-        // Speak the word when clicked
+        console.log(`GameManager.handleWordClick() called for word: "${word}"`);
+        
+        // Speak the word when clicked using new TTSUtil with concurrency management
         if (typeof utils !== 'undefined' && utils.TTSUtil) {
-            utils.TTSUtil.speak(word);
+            console.log(`GameManager.handleWordClick() - Calling TTSUtil.speakWord for: "${word}"`);
+            utils.TTSUtil.speakWord(word);
+            
+            // Add UI feedback during pronunciation - highlight the clicked word
+            e.target.classList.add('word-pronunciation-active');
+            setTimeout(() => {
+                e.target.classList.remove('word-pronunciation-active');
+            }, 1000); // Remove highlight after 1 second (approximate pronunciation time)
+        } else {
+            console.warn('GameManager.handleWordClick() - utils or TTSUtil not available');
         }
         
         // Create a word element in the sentence target
@@ -882,9 +916,126 @@ const GameManager = {
         });
     },
     
-    // Show settings screen (placeholder)
+    // Show settings screen
     showSettings: function() {
-        this.showFeedback("Settings screen coming soon!", "success");
+        // Switch to settings screen
+        document.getElementById('home-screen').classList.remove('active');
+        document.getElementById('game-screen').classList.remove('active');
+        document.getElementById('settings-screen').classList.add('active');
+        
+        // Update settings display
+        this.updateSettingsDisplay();
+    },
+    
+    // Update settings display with current values
+    updateSettingsDisplay: function() {
+        const settingsScreen = document.getElementById('settings-screen');
+        if (!settingsScreen) return;
+        
+        // Get current settings from appState
+        const settings = utils.appState.settings;
+        const ttsConfig = utils.appState.ttsConfig;
+        
+        // Update TTS settings
+        const enableTTSElement = document.getElementById('enable-tts');
+        if (enableTTSElement) {
+            enableTTSElement.checked = settings.enableTTS;
+        }
+        
+        const ttsVolumeElement = document.getElementById('tts-volume');
+        if (ttsVolumeElement) {
+            ttsVolumeElement.value = ttsConfig.volume;
+        }
+        
+        const ttsRateElement = document.getElementById('tts-rate');
+        if (ttsRateElement) {
+            ttsRateElement.value = ttsConfig.rate;
+        }
+        
+        const ttsPitchElement = document.getElementById('tts-pitch');
+        if (ttsPitchElement) {
+            ttsPitchElement.value = ttsConfig.pitch;
+        }
+    },
+    
+    // Initialize settings event listeners
+    initSettings: function() {
+        // Save settings button
+        const saveSettingsBtn = document.getElementById('save-settings-btn');
+        if (saveSettingsBtn) {
+            saveSettingsBtn.addEventListener('click', () => {
+                this.saveSettings();
+            });
+        }
+        
+        // Back to home button
+        const backToHomeBtn = document.getElementById('back-to-home-btn');
+        if (backToHomeBtn) {
+            backToHomeBtn.addEventListener('click', () => {
+                this.backToHome();
+            });
+        }
+        
+        // Add event listeners for real-time TTS preview
+        const enableTTSElement = document.getElementById('enable-tts');
+        if (enableTTSElement) {
+            enableTTSElement.addEventListener('change', (e) => {
+                if (e.target.checked && typeof utils !== 'undefined' && utils.TTSUtil) {
+                    utils.TTSUtil.speak('Text-to-speech enabled');
+                }
+            });
+        }
+        
+        const ttsVolumeElement = document.getElementById('tts-volume');
+        if (ttsVolumeElement) {
+            ttsVolumeElement.addEventListener('input', (e) => {
+                if (typeof utils !== 'undefined' && utils.TTSUtil) {
+                    // Preview volume change with a sample word
+                    utils.TTSUtil.speak('Volume test');
+                }
+            });
+        }
+    },
+    
+    // Save settings
+    saveSettings: function() {
+        // Get settings elements
+        const enableTTSElement = document.getElementById('enable-tts');
+        const ttsVolumeElement = document.getElementById('tts-volume');
+        const ttsRateElement = document.getElementById('tts-rate');
+        const ttsPitchElement = document.getElementById('tts-pitch');
+        
+        // Update appState with new settings
+        if (enableTTSElement) {
+            utils.appState.settings.enableTTS = enableTTSElement.checked;
+        }
+        
+        if (ttsVolumeElement) {
+            utils.appState.ttsConfig.volume = parseFloat(ttsVolumeElement.value);
+        }
+        
+        if (ttsRateElement) {
+            utils.appState.ttsConfig.rate = parseFloat(ttsRateElement.value);
+        }
+        
+        if (ttsPitchElement) {
+            utils.appState.ttsConfig.pitch = parseFloat(ttsPitchElement.value);
+        }
+        
+        // Save to localStorage
+        if (typeof utils !== 'undefined' && utils.StorageUtil) {
+            utils.StorageUtil.saveState();
+        }
+        
+        // Show feedback
+        this.showFeedback('Settings saved successfully!', 'success');
+    },
+    
+    // Back to home screen
+    backToHome: function() {
+        // Switch back to home screen
+        document.getElementById('settings-screen').classList.remove('active');
+        document.getElementById('home-screen').classList.add('active');
     },
     
     // Show feedback message with encouraging messages
@@ -912,6 +1063,53 @@ const GameManager = {
                 feedbackContainer.removeChild(feedbackEl);
             }
         }, 3000);
+        
+        // Speak the feedback message if TTS is enabled
+        if (typeof utils !== 'undefined' && utils.TTSUtil) {
+            utils.TTSUtil.speak(message);
+        }
+    },
+    
+    // Show feedback message with translation for correct answers
+    showFeedbackWithTranslation: function(message, translation, type) {
+        // Clear any existing feedback
+        if (gameState.feedbackTimeout) {
+            clearTimeout(gameState.feedbackTimeout);
+        }
+        
+        const feedbackContainer = document.getElementById('feedback-container');
+        if (!feedbackContainer) return;
+        
+        // Create feedback element
+        const feedbackEl = document.createElement('div');
+        feedbackEl.className = `feedback-message feedback-${type}`;
+        
+        // Create message element
+        const messageEl = document.createElement('div');
+        messageEl.className = 'feedback-message-text';
+        messageEl.textContent = message;
+        
+        // Create translation element if translation is provided
+        if (translation) {
+            const translationEl = document.createElement('div');
+            translationEl.className = 'feedback-translation';
+            translationEl.textContent = `Translation: ${translation}`;
+            feedbackEl.appendChild(messageEl);
+            feedbackEl.appendChild(translationEl);
+        } else {
+            feedbackEl.appendChild(messageEl);
+        }
+        
+        // Clear container and add new feedback
+        feedbackContainer.innerHTML = '';
+        feedbackContainer.appendChild(feedbackEl);
+        
+        // Auto-remove after 5 seconds (longer for translation)
+        gameState.feedbackTimeout = setTimeout(() => {
+            if (feedbackContainer.contains(feedbackEl)) {
+                feedbackContainer.removeChild(feedbackEl);
+            }
+        }, 5000);
         
         // Speak the feedback message if TTS is enabled
         if (typeof utils !== 'undefined' && utils.TTSUtil) {
@@ -1007,6 +1205,9 @@ const GameManager = {
         
         // Set up home screen buttons
         this.updateHomeScreen();
+        
+        // Initialize settings event listeners
+        this.initSettings();
     }
 };
 
