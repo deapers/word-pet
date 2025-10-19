@@ -590,10 +590,7 @@ const GameManager = {
                 // Display the game interface with the new sentence
                 this.displaySentencePuzzle();
                 
-                // Show progress if in continuous mode (silent - no TTS)
-                if (gameState.isInContinuousMode) {
-                    this.showFeedback(`Sentence ${gameState.sentencesCompleted + 1}/50`, "success", "");
-                }
+                // Progress is already shown in the title, no need for duplicate feedback
             }, 1500);
         }
     },
@@ -652,8 +649,7 @@ const GameManager = {
         // Update game state
         gameState.isGameActive = true;
         
-        // Show progress (silent - no TTS)
-        this.showFeedback(`Sentence ${gameState.sentencesCompleted + 1}/50`, "success", "");
+        // Progress is already shown in the title, no need for duplicate feedback
     },
     
     // Start continuous game mode
