@@ -69,10 +69,10 @@ wordpet-spec.md - 完整设计规格文档
   "player": {
     "level": 1,
     "coins": 0,
-    "stamina": 0,  // 当前体力值
-    "maxStamina": 5,  // 最大体力值（达到5点时为满）
-    "staminaRechargeTime": 60000,  // 1分钟（60000ms）- 每分钟恢复1点
-    "lastStaminaUpdate": "timestamp",  // 最后体力更新时间
+    "stamina": 0,  
+    "maxStamina": 5,  
+    "staminaRechargeTime": 60000,  
+    "lastStaminaUpdate": "timestamp",  
     "currentCombo": 0,
     "maxCombo": 0,
     "totalSentencesCompleted": 0,
