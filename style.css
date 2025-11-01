@@ -574,6 +574,23 @@ h3 {
   font-size: var(--font-size-normal);
 }
 
+/* TTS Status Indicator */
+.status-indicator {
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  text-align: center;
+  font-weight: bold;
+}
+
+.status-working {
+  color: #2ecc71;  /* Green for working */
+}
+
+.status-not-working {
+  color: #e74c3c;  /* Red for not working */
+}
+
 /* Accessibility enhancements */
 @media (prefers-reduced-motion: reduce) {
   *,

@@ -87,26 +87,103 @@ const SoundEffectManager = {
 
 // Text-to-Speech utility
 const TTSUtil = {
-    // Preload voices to ensure they're available
+    // Check if TTS is supported and available
+    isTTSAvailable: function() {
+        return 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
+    },
+    
+    // Check if voices are loaded and available
+    checkVoicesAvailability: function() {
+        if (!this.isTTSAvailable()) {
+            return false;
+        }
+        
+        // Get voices immediately
+        const voices = speechSynthesis.getVoices();
+        if (voices.length > 0) {
+            console.log(`TTSUtil.checkVoicesAvailability() - Voices available: ${voices.length}`);
+            return true;
+        }
+        
+        // If no voices immediately, set up listener to wait for voices
+        return new Promise((resolve) => {
+            const handleVoicesChanged = () => {
+                const voices = speechSynthesis.getVoices();
+                console.log(`TTSUtil.checkVoicesAvailability() - Voices loaded: ${voices.length}`);
+                speechSynthesis.onvoiceschanged = null;
+                
+                if (voices.length > 0) {
+                    resolve(true);
+                } else {
+                    console.warn('TTSUtil.checkVoicesAvailability() - No voices available even after voiceschanged event');
+                    resolve(false);
+                }
+            };
+            
+            speechSynthesis.onvoiceschanged = handleVoicesChanged;
+            
+            // Trigger voice loading by calling getVoices again
+            speechSynthesis.getVoices();
+            
+            // Timeout after 2 seconds to prevent hanging
+            setTimeout(() => {
+                speechSynthesis.onvoiceschanged = null;
+                console.warn('TTSUtil.checkVoicesAvailability() - Timeout waiting for voices');
+                resolve(false);
+            }, 2000);
+        });
+    },
+    
+    // Preload voices to ensure they're available, with promise-based callback
     init: function() {
-        console.log('TTSUtil.init() called');
-        // Load voices early to make them available
-        if ('speechSynthesis' in window) {
-            // Get voices to trigger loading
+        return new Promise((resolve) => {
+            console.log('TTSUtil.init() called');
+            
+            if (!this.isTTSAvailable()) {
+                console.warn('TTSUtil.init() - speechSynthesis not supported in this browser');
+                resolve(false);
+                return;
+            }
+            
+            // Load voices early to make them available
             const voices = speechSynthesis.getVoices();
             console.log(`TTSUtil.init() - Initial voices count: ${voices.length}`);
             
-            // Add listener to capture when voices are loaded
-            speechSynthesis.onvoiceschanged = function() {
-                console.log('TTSUtil - voices changed event triggered');
-                // Update voices when they're available
-                const voices = speechSynthesis.getVoices();
-                console.log(`TTSUtil - Voices after change: ${voices.length}`);
-                speechSynthesis.onvoiceschanged = null;
-            };
-        } else {
-            console.warn('TTSUtil.init() - speechSynthesis not supported in this browser');
-        }
+            if (voices.length > 0) {
+                // Voices are already available
+                console.log('TTSUtil.init() - Voices already available');
+                resolve(true);
+            } else {
+                // Add listener to capture when voices are loaded
+                const handleVoicesChanged = () => {
+                    const voices = speechSynthesis.getVoices();
+                    console.log(`TTSUtil - Voices after change: ${voices.length}`);
+                    speechSynthesis.onvoiceschanged = null;
+                    
+                    if (voices.length > 0) {
+                        console.log('TTSUtil.init() - Voices loaded successfully');
+                        resolve(true);
+                    } else {
+                        console.warn('TTSUtil.init() - No voices available after voiceschanged event');
+                        resolve(false);
+                    }
+                };
+                
+                speechSynthesis.onvoiceschanged = handleVoicesChanged;
+                
+                // Trigger voice loading by calling getVoices again
+                speechSynthesis.getVoices();
+                
+                // Timeout after 2 seconds to prevent hanging
+                setTimeout(() => {
+                    if (speechSynthesis.onvoiceschanged === handleVoicesChanged) {
+                        speechSynthesis.onvoiceschanged = null;
+                        console.warn('TTSUtil.init() - Timeout waiting for voices during initialization');
+                        resolve(false);
+                    }
+                }, 2000);
+            }
+        });
     },
     
     // Speak text using Web Speech API with concurrency management
@@ -308,6 +385,33 @@ const TTSUtil = {
             appState.userInteractionState.currentAudioPlaying = false;
             appState.userInteractionState.audioQueue = []; // Clear the queue
             console.log('TTSUtil.stop() - Speech cancelled and queue cleared');
+        }
+    },
+    
+    // Check if TTS is working properly
+    testTTS: async function() {
+        console.log('TTSUtil.testTTS() called');
+        
+        // Check if TTS is available and voices are loaded
+        if (!this.isTTSAvailable()) {
+            console.warn('TTSUtil.testTTS() - TTS not available in this browser');
+            return false;
+        }
+        
+        const voicesAvailable = await this.checkVoicesAvailability();
+        if (!voicesAvailable) {
+            console.warn('TTSUtil.testTTS() - No voices available for TTS');
+            return false;
+        }
+        
+        // Try to speak a simple test phrase
+        try {
+            this.speak('Testing TTS functionality');
+            console.log('TTSUtil.testTTS() - TTS test successful');
+            return true;
+        } catch (error) {
+            console.error('TTSUtil.testTTS() - TTS test failed:', error);
+            return false;
         }
     },
     
