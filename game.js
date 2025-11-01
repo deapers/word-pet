@@ -985,6 +985,21 @@ const GameManager = {
             });
         }
         
+        // TTS test button
+        const ttsTestBtn = document.getElementById('tts-test-btn');
+        if (ttsTestBtn) {
+            ttsTestBtn.addEventListener('click', async () => {
+                if (typeof utils !== 'undefined' && utils.TTSUtil) {
+                    const status = await utils.TTSUtil.testTTS();
+                    const statusText = document.getElementById('tts-status-text');
+                    if (statusText) {
+                        statusText.textContent = status ? 'Working' : 'Not working';
+                        statusText.className = status ? 'status-working' : 'status-not-working';
+                    }
+                }
+            });
+        }
+        
         // Add event listeners for real-time TTS preview
         const enableTTSElement = document.getElementById('enable-tts');
         if (enableTTSElement) {
@@ -1003,6 +1018,21 @@ const GameManager = {
                     utils.TTSUtil.speak('Volume test');
                 }
             });
+        }
+        
+        // Initialize TTS status display
+        this.updateTTSStatusDisplay();
+    },
+    
+    // Update TTS status display
+    updateTTSStatusDisplay: async function() {
+        if (typeof utils !== 'undefined' && utils.TTSUtil) {
+            const status = await utils.TTSUtil.testTTS();
+            const statusText = document.getElementById('tts-status-text');
+            if (statusText) {
+                statusText.textContent = status ? 'Working' : 'Not working';
+                statusText.className = status ? 'status-working' : 'status-not-working';
+            }
         }
     },
     
